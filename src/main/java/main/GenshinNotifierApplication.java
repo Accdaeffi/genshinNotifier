@@ -12,7 +12,7 @@ public class GenshinNotifierApplication {
 	public static void main(String[] args) {
 		try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(new Bot(getenv.get("BOT_NAME"), 
+            botsApi.registerBot(new Bot(getenv.get("BOT_USERNAME"), 
             							getenv.get("BOT_TOKEN"), 
             							getenv.get("DB_USER"),
             							getenv.get("DB_PASS")));

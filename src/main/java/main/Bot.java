@@ -1,7 +1,9 @@
 package main;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -9,13 +11,15 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
+import logic.MessageParser;
+
 import lombok.Getter;
 import lombok.Setter;
 
 public class Bot extends TelegramLongPollingBot {
 	
 	@Setter
-	private String BOT_NAME;
+	private String BOT_USERNAME;
 	
 	@Setter 
 	private String BOT_TOKEN;
@@ -25,8 +29,8 @@ public class Bot extends TelegramLongPollingBot {
 	private MongoDatabase database;
 	
 	
-	Bot(String botName, String botToken, String dbUser, String dbPass) {
-		this.setBOT_NAME(botName);
+	Bot(String botUserName, String botToken, String dbUser, String dbPass) {
+		this.setBOT_USERNAME(botUserName);
 		this.setBOT_TOKEN(botToken);
 		
 		ConnectionString connectionString = new ConnectionString("mongodb+srv://"+dbUser+":"+dbPass+"@dnoskov.emlnn.mongodb.net/DNoskov?retryWrites=true&w=majority");
@@ -38,12 +42,24 @@ public class Bot extends TelegramLongPollingBot {
 	}
 
 	public void onUpdateReceived(Update update) {
-		// TODO Auto-generated method stub
+		
+		if (update.hasMessage() && update.getMessage().hasText()) {
+			
+			Message message = update.getMessage();
+			
+			String messageText = message.getText();
+			Long chatId = message.getChatId();
+			User author = message.getFrom();
+			
+			MessageParser parser = new MessageParser(database, messageText, chatId, author, this); 
+			parser.parseMessage();
+
+		}
 		
 	}
 
 	public String getBotUsername() {
-		return BOT_NAME;
+		return BOT_USERNAME;
 	}
 
 	@Override
