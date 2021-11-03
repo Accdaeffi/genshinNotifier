@@ -3,7 +3,6 @@ package logic;
 import java.io.File;
 import java.time.ZoneId;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -74,45 +73,129 @@ public class MessageParser {
 	}
 	
 	public void parseMessage() {
-		String arr[] = messageText.split(" ", 2);
-		String command = arr[0];
-		String argument = arr.length > 1 ? arr[1] : null;
-
-		switch (command) {
-			case "/globalFarm": {
-				try {
-					if (dayOfWeek != 0) {
-						String nameOfFile = dayOfWeek+".jpg";
-										
-						SendPhoto photo = new SendPhoto();
-						photo.setPhoto( new InputFile( new File(
-								getClass().
-								getClassLoader().
-								getResource(nameOfFile).
-								getFile())));
-						photo.setChatId(getMessageChatId().toString());
-						try {
-							sender.execute(photo);
-						} catch (TelegramApiException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+		try {
+			String arr[] = messageText.split(" ", 2);
+			String command = arr[0];
+			if (command.contains("@")) {
+					command = arr[0].substring(0, arr[0].indexOf("@"));
+			}
+			String argument = arr.length > 1 ? arr[1] : null;
+	
+			switch (command) {
+				case "/help": {
+					StringBuilder builder = new StringBuilder();
+					builder.append("/global\\_farm \\- для общей картины");
+					builder.append(System.lineSeparator());
+					builder.append("/personal\\_farm \\- для того, чтобы узнать, что именно тебе надо");
+					builder.append(System.lineSeparator());
+					builder.append("/add \\*имя персонажа на английском \\(с HHW\\)\\* \\- чтобы сказать боту, что тебе это надо");
+					builder.append(System.lineSeparator());
+					builder.append("/del \\*имя персонажа на английском \\(с HHW\\)\\* \\- чтобы сказать боту, что тебе это больше не надо");
+					sendMessage(builder.toString());
+				}
+				break;
+				case "/global_farm": {
+					try {
+						if (dayOfWeek != 0) {
+							String nameOfFile = dayOfWeek+".jpg";
+									
+							sendPhoto(new File(getClass()
+												.getClassLoader()
+												.getResource(nameOfFile)
+												.getFile()));
+							
+							
+						} else {
+							
+							sendMessage("Фарми что угодно - сегодня воскресенье!");
 						}
-					} else {
-						SendMessage outMsg = new SendMessage();
-						outMsg.setChatId(getMessageChatId().toString());
-						outMsg.setText("����� ��� ������ - ������� �����������!");
+					}
+					catch (Exception ex) {
+						ex.printStackTrace();
 					}
 				}
-				catch (Exception ex) {
-					ex.printStackTrace();
+				break;
+				case "/personal_farm":
+				{
+					String answerText;
+					
+					if (messageAuthor.getId()<0) { 	// если это пишется от лица канала или чата
+						answerText = "Ты кто такой вообще?";
+					} else {
+						PersonalFarm personalFarm = new PersonalFarm(messageAuthor.getId(), database);
+						answerText = personalFarm.getPersonalFarm(dayOfWeek);
+					}
+				
+					sendMessage(answerText);
+				}
+				break;
+				case "/add":
+				{
+					String answerText;
+					
+					if (messageAuthor.getId()<0) { 	// если это пишется от лица канала или чата
+						answerText = "Ты кто такой вообще?";
+					} else {
+						if (messageChatId<0) {		// если это пишется в чате
+							answerText = "Давай в личку, нечего чат засорять";
+						} else {
+							PersonalFarm personalFarm = new PersonalFarm(messageAuthor.getId(), database);
+							answerText = personalFarm.add(argument);
+						}
+					}
+					
+					sendMessage(answerText);
+				}
+				break;
+				case "/del":
+				{
+					String answerText;
+					
+					if (messageAuthor.getId()<0) { 	// если это пишется от лица канала или чата
+						answerText = "Ты кто такой вообще?";
+					} else {
+						if (messageChatId<0) {		// если это пишется в чате
+							answerText = "Давай в личку, нечего чат засорять";
+						} else {
+							PersonalFarm personalFarm = new PersonalFarm(messageAuthor.getId(), database);
+							answerText = personalFarm.del(argument);
+						}
+					}
+					
+					sendMessage(answerText);
+				}
+				break;
+				default: {
+					
 				}
 			}
-			break;
-			default: {
-				
-			}
-			
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		
+	}
+	
+	private void sendMessage(String answerText) {
+		SendMessage outMsg = new SendMessage();
+		outMsg.setChatId(getMessageChatId().toString());
+		outMsg.setText(answerText);
+		outMsg.enableMarkdownV2(true);
+		try {
+			sender.execute(outMsg);
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void sendPhoto(File answerPhoto) {
+		SendPhoto photo = new SendPhoto();
+		photo.setPhoto(new InputFile(answerPhoto));
+		photo.setChatId(getMessageChatId().toString());
+		try {
+			sender.execute(photo);
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+		}
 	}
 }

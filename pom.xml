@@ -2,9 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ru.dnoskov.telegram</groupId>
   <artifactId>genshinnotifier</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0-RELEASE</version>
   <name>Genshin Notifier Bot</name>
-  
   
   <dependencies>
   	<dependency>
