@@ -2,8 +2,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ru.dnoskov.telegram</groupId>
   <artifactId>genshinnotifier</artifactId>
-  <version>1.0.0-RELEASE</version>
+  <version>1.1.0-RELEASE</version>
   <name>Genshin Notifier Bot</name>
+  
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
   
   <dependencies>
   	<dependency>
