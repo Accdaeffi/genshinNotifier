@@ -20,29 +20,34 @@ import lombok.Setter;
 public class MessageParser {
 	
 	// Server time GMT+1, Domain restart time - 4:00 at server time
-	// So in GMT-3 timezone domain get restarted at 0:00
+	// So in GMT-3 timezone domain get changed at 0:00
 	private final String TIME_OFFSET = "-3"; 
 
 	@Setter
 	@Getter
 	private MongoDatabase database;
 
+	// who sent message with command
 	@Setter
 	@Getter
 	private User messageAuthor;
 	
+	// where message was sent
 	@Setter
 	@Getter
 	private Long messageChatId;
 	
+	// text of the message
 	@Setter
 	@Getter
 	private String messageText;
 	
+	// today day of week
 	@Setter
 	@Getter
 	private int dayOfWeek;
 	
+	// use this to send messages 
 	@Setter
 	@Getter
 	private AbsSender sender;
@@ -63,15 +68,12 @@ public class MessageParser {
 				TimeZone.getTimeZone(ZoneId.of(TIME_OFFSET))); 
 		
 		dayOfWeek = today.get(Calendar.DAY_OF_WEEK);
-		
-		// if today not Sunday
-		if (dayOfWeek != 1) {
-			
-			// convert Thursday to Monday, Friday to Tuesday and Saturday to Wednesday 
-			dayOfWeek = (dayOfWeek-2)%3+1;
-		}
 	}
 	
+	/**
+	 * Decide, which message was sent and execute necessary operations. 
+	 * Main method of the class.
+	 */
 	public void parseMessage() {
 		try {
 			String arr[] = messageText.split(" ", 2);
@@ -82,11 +84,12 @@ public class MessageParser {
 			String argument = arr.length > 1 ? arr[1] : null;
 	
 			switch (command) {
+			
 				case "/help": {
 					StringBuilder builder = new StringBuilder();
 					builder.append("/global\\_farm \\- для общей картины");
 					builder.append(System.lineSeparator());
-					builder.append("/personal\\_farm \\- для того, чтобы узнать, что именно тебе надо");
+					builder.append("/personal\\_farm \\(или /pfarm\\) \\- для того, чтобы узнать, что именно тебе надо фармить сегодня");
 					builder.append(System.lineSeparator());
 					builder.append("/add \\*имя персонажа на английском \\(с HHW\\)\\* \\- чтобы сказать боту, что тебе это надо");
 					builder.append(System.lineSeparator());
@@ -94,10 +97,13 @@ public class MessageParser {
 					sendMessage(builder.toString());
 				}
 				break;
+				
+				case "/gfarm":
 				case "/global_farm": {
 					try {
-						if (dayOfWeek != 0) {
-							String nameOfFile = dayOfWeek+".jpg";
+						if (dayOfWeek != Calendar.SUNDAY) {
+							
+							String nameOfFile = Util.ConvertWeekDayToFarmDay(dayOfWeek)+".jpg";
 									
 							sendPhoto(new File(getClass()
 												.getClassLoader()
@@ -106,8 +112,7 @@ public class MessageParser {
 							
 							
 						} else {
-							
-							sendMessage("Фарми что угодно - сегодня воскресенье!");
+							sendMessage("Фарми что угодно \\- сегодня воскресенье\\!");
 						}
 					}
 					catch (Exception ex) {
@@ -115,6 +120,8 @@ public class MessageParser {
 					}
 				}
 				break;
+				
+				case "/pfarm":
 				case "/personal_farm":
 				{
 					String answerText;
@@ -129,6 +136,22 @@ public class MessageParser {
 					sendMessage(answerText);
 				}
 				break;
+				
+				case "/list":
+				{
+					String answerText;
+					
+					if (messageAuthor.getId()<0) { 	// если это пишется от лица канала или чата
+						answerText = "Ты кто такой вообще?";
+					} else {
+						PersonalFarm personalFarm = new PersonalFarm(messageAuthor.getId(), database);
+						answerText = personalFarm.list();
+					}
+					
+					sendMessage(answerText);
+				}
+				break;
+				
 				case "/add":
 				{
 					String answerText;
@@ -147,6 +170,7 @@ public class MessageParser {
 					sendMessage(answerText);
 				}
 				break;
+				
 				case "/del":
 				{
 					String answerText;
@@ -165,6 +189,7 @@ public class MessageParser {
 					sendMessage(answerText);
 				}
 				break;
+				
 				default: {
 					
 				}
