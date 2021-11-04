@@ -19,6 +19,7 @@ public class GenshinNotifierApplication {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+		
 	}
 
 }

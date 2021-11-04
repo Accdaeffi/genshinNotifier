@@ -1,0 +1,5 @@
+logic\PersonalFarm.class
+main\GenshinNotifierApplication.class
+logic\Util.class
+main\Bot.class
+logic\MessageParser.class
