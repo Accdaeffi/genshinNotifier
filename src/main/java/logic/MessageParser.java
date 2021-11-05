@@ -87,13 +87,13 @@ public class MessageParser {
 			
 				case "/help": {
 					StringBuilder builder = new StringBuilder();
-					builder.append("/global\\_farm \\- для общей картины");
+					builder.append("/global_farm - для общей картины");
 					builder.append(System.lineSeparator());
-					builder.append("/personal\\_farm \\(или /pfarm\\) \\- для того, чтобы узнать, что именно тебе надо фармить сегодня");
+					builder.append("/personal_farm (или /pfarm) - для того, чтобы узнать, что именно тебе надо фармить сегодня");
 					builder.append(System.lineSeparator());
-					builder.append("/add \\*имя персонажа на английском \\(с HHW\\)\\* \\- чтобы сказать боту, что тебе это надо");
+					builder.append("/add *имя персонажа на английском (с HHW)* - чтобы сказать боту, что тебе это надо");
 					builder.append(System.lineSeparator());
-					builder.append("/del \\*имя персонажа на английском \\(с HHW\\)\\* \\- чтобы сказать боту, что тебе это больше не надо");
+					builder.append("/del *имя персонажа на английском (с HHW)* - чтобы сказать боту, что тебе это больше не надо");
 					sendMessage(builder.toString());
 				}
 				break;
@@ -117,7 +117,7 @@ public class MessageParser {
 							
 							
 						} else {
-							sendMessage("Фарми что угодно \\- сегодня воскресенье\\!");
+							sendMessage("Фарми что угодно - сегодня воскресенье!");
 						}
 					}
 					catch (Exception ex) {
@@ -131,27 +131,21 @@ public class MessageParser {
 				{
 					String answerText;
 					
-					if (messageAuthor.getId()<0) { 	// если это пишется от лица канала или чата
-						answerText = "Ты кто такой вообще?";
-					} else {
-						PersonalFarm personalFarm = new PersonalFarm(messageAuthor.getId(), database);
-						answerText = personalFarm.getPersonalFarm(dayOfWeek);
-					}
+					Personal personal = new Personal(messageAuthor.getId(), database);
+					answerText = personal.getPersonalFarm(dayOfWeek);
 				
 					sendMessage(answerText);
 				}
 				break;
 				
+				
+				/*Work with personal farm targets*/
 				case "/list":
 				{
 					String answerText;
 					
-					if (messageAuthor.getId()<0) { 	// если это пишется от лица канала или чата
-						answerText = "Ты кто такой вообще?";
-					} else {
-						PersonalFarm personalFarm = new PersonalFarm(messageAuthor.getId(), database);
-						answerText = personalFarm.list();
-					}
+					Personal personal = new Personal(messageAuthor.getId(), database);
+					answerText = personal.list();
 					
 					sendMessage(answerText);
 				}
@@ -161,15 +155,11 @@ public class MessageParser {
 				{
 					String answerText;
 					
-					if (messageAuthor.getId()<0) { 	// если это пишется от лица канала или чата
-						answerText = "Ты кто такой вообще?";
+					if (messageChatId<0) {		// если это пишется в чате
+						answerText = "Давай в личку, нечего чат засорять";
 					} else {
-						if (messageChatId<0) {		// если это пишется в чате
-							answerText = "Давай в личку, нечего чат засорять";
-						} else {
-							PersonalFarm personalFarm = new PersonalFarm(messageAuthor.getId(), database);
-							answerText = personalFarm.add(argument);
-						}
+						Personal personal = new Personal(messageAuthor.getId(), database);
+						answerText = personal.add(argument);
 					}
 					
 					sendMessage(answerText);
@@ -180,16 +170,58 @@ public class MessageParser {
 				{
 					String answerText;
 					
-					if (messageAuthor.getId()<0) { 	// если это пишется от лица канала или чата
-						answerText = "Ты кто такой вообще?";
+					if (messageChatId<0) {		// если это пишется в чате
+						answerText = "Давай в личку, нечего чат засорять.";
 					} else {
-						if (messageChatId<0) {		// если это пишется в чате
-							answerText = "Давай в личку, нечего чат засорять";
-						} else {
-							PersonalFarm personalFarm = new PersonalFarm(messageAuthor.getId(), database);
-							answerText = personalFarm.del(argument);
-						}
+						Personal personal = new Personal(messageAuthor.getId(), database);
+						answerText = personal.del(argument);
 					}
+					
+					sendMessage(answerText);
+				}
+				break;
+				
+				
+				/*Work with personal notes*/
+				case "/get_note":
+				{
+					String answerText;
+					
+					Personal personal = new Personal(messageAuthor.getId(), database);
+					answerText = personal.getNote(argument);
+					
+					sendMessage(answerText);
+				}
+				break;
+				
+				case "/get_all_notes":
+				{
+					String answerText;
+					
+					Personal personal = new Personal(messageAuthor.getId(), database);
+					answerText = personal.getAllNotes();
+					
+					sendMessage(answerText);
+				}
+				break;
+				
+				case "/add_note":
+				{
+					String answerText;
+					
+					Personal personal = new Personal(messageAuthor.getId(), database);
+					answerText = personal.addNote(argument);
+					
+					sendMessage(answerText);
+				}
+				break;
+				
+				case "/del_note":
+				{
+					String answerText;
+					
+					Personal personal = new Personal(messageAuthor.getId(), database);
+					answerText = personal.delNote(argument);
 					
 					sendMessage(answerText);
 				}
@@ -210,7 +242,7 @@ public class MessageParser {
 		SendMessage outMsg = new SendMessage();
 		outMsg.setChatId(getMessageChatId().toString());
 		outMsg.setText(answerText);
-		outMsg.enableMarkdownV2(true);
+		//outMsg.enableMarkdownV2(true);
 		try {
 			sender.execute(outMsg);
 		} catch (TelegramApiException e) {
