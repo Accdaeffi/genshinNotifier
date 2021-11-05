@@ -1,6 +1,9 @@
 package main;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -18,6 +21,8 @@ import lombok.Setter;
 
 public class Bot extends TelegramLongPollingBot {
 	
+	final static Logger logger = LoggerFactory.getLogger(Bot.class);
+
 	@Setter
 	private String BOT_USERNAME;
 	
@@ -50,6 +55,10 @@ public class Bot extends TelegramLongPollingBot {
 			String messageText = message.getText();
 			Long chatId = message.getChatId();
 			User author = message.getFrom();
+			
+			if (messageText.startsWith("/")) {
+				logger.info("Command {} from {}", messageText, author.getUserName());
+			}
 			
 			MessageParser parser = new MessageParser(database, messageText, chatId, author, this); 
 			parser.parseMessage();

@@ -102,8 +102,13 @@ public class MessageParser {
 				case "/global_farm": {
 					try {
 						if (dayOfWeek != Calendar.SUNDAY) {
+							String nameOfFile;
 							
-							String nameOfFile = Util.ConvertWeekDayToFarmDay(dayOfWeek)+".jpg";
+							if (dayOfWeek != Calendar.SATURDAY) {
+								nameOfFile = Util.ConvertWeekDayToFarmDay(dayOfWeek)+".jpg";
+							} else {
+								nameOfFile = "6.jpg";
+							}
 									
 							sendPhoto(new File(getClass()
 												.getClassLoader()
