@@ -42,9 +42,9 @@ public class Personal {
 		StringBuilder answer = new StringBuilder();
 		
 		MongoCollection<Document> users = database.getCollection("users");
-		Document user = users.find(Filters.eq("id", userId)).first();
+		Document user = getOrCreateUserByTelegramId(users, userId);
 		
-		if (user == null || user.getList("items", String.class).isEmpty()) {
+		if (user.getList("items", String.class).isEmpty()) {
 			answer.append("Я не знаю, по каким предметам тебе нужна информация.");
 		} else {
 			List<String> userItems = user.getList("items", String.class);
@@ -114,9 +114,9 @@ public class Personal {
 		StringBuilder answer = new StringBuilder();
 		
 		MongoCollection<Document> users = database.getCollection("users");
-		Document user = users.find(Filters.eq("id", userId)).first();
+		Document user = getOrCreateUserByTelegramId(users, userId);
 		
-		if (user == null || user.getList("items", String.class).isEmpty()) {
+		if (user.getList("items", String.class).isEmpty()) {
 			answer.append("Ты пока не нацелен на прокачку ни одного предмета!.");
 		} else {
 			List<String> userItems = user.getList("items", String.class);
@@ -132,26 +132,23 @@ public class Personal {
 	/**
 	 * Add new item as a target to farm
 	 * 
-	 * @param itemName name of item
+	 * @param userInput - name or tag of item
 	 * @return Russian String with response message text 
 	 */
-	protected String add(String itemName) {
+	protected String add(String userInput) {
 		String answer;
 		
-		if (itemName == null) {
-			answer = "Ты не указал, что тебе нужно. Названия, если что - с английского HHW.";
+		if (userInput == null) {
+			answer = "Ты не указал, что тебе нужно. Названия, если что - с английского HHW или из /help.";
 		} else {
-			MongoCollection<Document> items = database.getCollection("items");
-			if (items.countDocuments(Filters.eq("name", itemName)) == 0) {
-				answer = "Ты неправильно указал, что тебе нужно. Названия бери с английского HHW.";
+			Document item = getItemByNameOrTag(database.getCollection("items"), userInput);
+			
+			if (item == null) {
+				answer = "Ты неправильно указал, что тебе нужно. Названия бери с английского HHW или из /help.";
 			} else {
+				String itemName = item.getString("name");
 				MongoCollection<Document> users = database.getCollection("users");
-				
-				Document user = users.find(Filters.eq("id", userId)).first();
-				if (user == null) {
-					user = createUser(userId);
-					users.insertOne(user);
-				}
+				Document user = getOrCreateUserByTelegramId(users, userId);
 				
 				if (user.getList("items", String.class).contains(itemName)) {
 					answer = "Ты уже добавил этот предмет!";
@@ -169,26 +166,23 @@ public class Personal {
 	/**
 	 * Delete item from list of targets to farm
 	 * 
-	 * @param itemName name of item
+	 * @param userInput - name or tag of item
 	 * @return Russian String with response message text 
 	 */
-	protected String del(String itemName) {
+	protected String del(String userInput) {
 		String answer;
 		
-		if (itemName == null) {
-			answer = "Ты не указал, что тебе нужно. Названия, если что - с английского HHW.";
+		if (userInput == null) {
+			answer = "Ты не указал, что тебе нужно. Названия, если что - с английского HHW или из /help.";
 		} else {
-			MongoCollection<Document> items = database.getCollection("items");
-			if (items.countDocuments(Filters.eq("name", itemName)) == 0) {
-				answer = "Ты неправильно указал, что тебе нужно. Названия бери с английского HHW.";
+			Document item = getItemByNameOrTag(database.getCollection("items"), userInput);
+			
+			if (item == null) {
+				answer = "Ты неправильно указал, что тебе нужно. Названия бери с английского HHW или из /help.";
 			} else {
+				String itemName = item.getString("name");
 				MongoCollection<Document> users = database.getCollection("users");
-				
-				Document user = users.find(Filters.eq("id", userId)).first();
-				if (user == null) {
-					user = createUser(userId);
-					users.insertOne(user);
-				}
+				Document user = getOrCreateUserByTelegramId(users, userId);
 				
 				if (!user.getList("items", String.class).contains(itemName)) {
 					answer = "Нельзя удалить то, что уже удалено!";
@@ -201,6 +195,19 @@ public class Personal {
 		}
 		
 		return answer;
+	}
+	
+	private Document getItemByNameOrTag(MongoCollection<Document> items, 
+										String input) {
+		
+		String fieldName = "name"; // поле для поиска - "tag" или "name"
+		
+		/* Если текст размером с тег и большими буквами - то это тег */
+		if ((input.length() == 3)&&(input.toUpperCase().equals(input))) {
+			fieldName = "tag";
+		}
+		
+		return items.find(Filters.eq(fieldName, input)).first();
 	}
 	
 	/**
@@ -218,16 +225,7 @@ public class Personal {
 			key = key.trim();
 				
 			MongoCollection<Document> users = database.getCollection("users");
-					
-			Document user = users.find(Filters.eq("id", userId)).first();
-			if (user == null) {
-				user = createUser(userId);
-				users.insertOne(user);
-			}
-				
-			if (user.get("notes") == null) {
-				user.append("notes", new Document());
-			}
+			Document user = getOrCreateUserByTelegramId(users, userId);
 				
 			Document userNotes = (Document) user.get("notes");
 				
@@ -251,17 +249,8 @@ public class Personal {
 	protected String getAllNotes() {
 		StringBuilder answer = new StringBuilder();
 		
-		MongoCollection<Document> users = database.getCollection("users");
-					
-		Document user = users.find(Filters.eq("id", userId)).first();
-		if (user == null) {
-			user = createUser(userId);
-			users.insertOne(user);
-		}
-				
-		if (user.get("notes") == null) {
-			user.append("notes", new Document());
-		}
+		MongoCollection<Document> users = database.getCollection("users");		
+		Document user = getOrCreateUserByTelegramId(users, userId);
 				
 		Document userNotes = (Document) user.get("notes");
 				
@@ -300,16 +289,7 @@ public class Personal {
 				String value = arr[1].trim();
 				
 				MongoCollection<Document> users = database.getCollection("users");
-					
-				Document user = users.find(Filters.eq("id", userId)).first();
-				if (user == null) {
-					user = createUser(userId);
-					users.insertOne(user);
-				}
-				
-				if (user.get("notes") == null) {
-					user.append("notes", new Document());
-				}
+				Document user = getOrCreateUserByTelegramId(users, userId);
 				
 				Document userNotes = (Document) user.get("notes");
 				
@@ -345,16 +325,7 @@ public class Personal {
 			key = key.trim();
 				
 			MongoCollection<Document> users = database.getCollection("users");
-					
-			Document user = users.find(Filters.eq("id", userId)).first();
-			if (user == null) {
-				user = createUser(userId);
-				users.insertOne(user);
-			}
-				
-			if (user.get("notes") == null) {
-				user.append("notes", new Document());
-			}
+			Document user = getOrCreateUserByTelegramId(users, userId);
 				
 			Document userNotes = (Document) user.get("notes");
 				
@@ -370,6 +341,17 @@ public class Personal {
 		}
 		
 		return answer;
+	}
+	
+	private Document getOrCreateUserByTelegramId(MongoCollection<Document> users, 
+												 Long userId) {
+		Document user = users.find(Filters.eq("id", userId)).first();
+		if (user == null) {
+			user = createUser(userId);
+			users.insertOne(user);
+		}
+		
+		return user;
 	}
 	
 	private Document createUser(Long userId) {

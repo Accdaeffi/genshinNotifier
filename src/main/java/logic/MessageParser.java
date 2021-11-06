@@ -87,13 +87,10 @@ public class MessageParser {
 			
 				case "/help": {
 					StringBuilder builder = new StringBuilder();
-					builder.append("/global_farm - для общей картины");
+					builder.append("Список команд бота:");
 					builder.append(System.lineSeparator());
-					builder.append("/personal_farm (или /pfarm) - для того, чтобы узнать, что именно тебе надо фармить сегодня");
 					builder.append(System.lineSeparator());
-					builder.append("/add *имя персонажа на английском (с HHW)* - чтобы сказать боту, что тебе это надо");
-					builder.append(System.lineSeparator());
-					builder.append("/del *имя персонажа на английском (с HHW)* - чтобы сказать боту, что тебе это больше не надо");
+					builder.append("https://telegra.ph/Spisok-komand-GenshinNotifierBot-11-06");
 					sendMessage(builder.toString());
 				}
 				break;
