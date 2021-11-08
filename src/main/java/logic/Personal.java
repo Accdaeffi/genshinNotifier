@@ -32,6 +32,8 @@ public class Personal {
 		this.database = database;
 	}
 	
+	/* Personal farm */
+	
 	/**
 	 * Calculate result of a command to get the goals of today's personal farm
 	 * 
@@ -104,6 +106,8 @@ public class Personal {
 		}
 		return allItems.find(filters);
 	}
+	
+	/* Work with list of personal farm's targets */
 	
 	/**
 	 * Get list with targets of farm
@@ -209,6 +213,8 @@ public class Personal {
 		
 		return items.find(Filters.eq(fieldName, input)).first();
 	}
+	
+	/* Notes */
 	
 	/**
 	 * Get note by its key
