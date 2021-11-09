@@ -24,8 +24,7 @@ public class GenshinNotifierApplication {
             logger.info("Bot started!");
             
         } catch (TelegramApiException e) {
-        	logger.error("Critical error!");
-            e.printStackTrace();
+        	logger.error("Critical error!", e);
         }
 		
 	}

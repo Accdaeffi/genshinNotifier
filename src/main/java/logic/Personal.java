@@ -14,6 +14,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
+import database.DatabaseItemsMethods;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -51,10 +52,11 @@ public class Personal {
 		} else {
 			List<String> userItems = user.getList("items", String.class);
 		
-			MongoCollection<Document> items = database.getCollection("items");
 			List<String> todayFarmUserItems = new LinkedList<>();
 			
-			getFarmableItemsByDay(items, userItems, dayOfWeek)
+			DatabaseItemsMethods databaseItems = new DatabaseItemsMethods();
+			
+			databaseItems.getFarmableItemsByDay(userItems, dayOfWeek)
 			.forEach(item -> todayFarmUserItems.add(item.getString("name")));
 			
 			if (todayFarmUserItems.isEmpty()) {
@@ -64,7 +66,7 @@ public class Personal {
 				List<String> tomorrowFarmUserItems = new LinkedList<>();
 				
 				int nextDayOfWeek = dayOfWeek%7+1;
-				getFarmableItemsByDay(items, userItems, nextDayOfWeek)
+				databaseItems.getFarmableItemsByDay(userItems, nextDayOfWeek)
 					.forEach(item -> tomorrowFarmUserItems.add(item.getString("name")));
 				
 				if (tomorrowFarmUserItems.isEmpty()) {
@@ -82,29 +84,6 @@ public class Personal {
 			}
 		}
 		return answer.toString();
-	}
-	
-	/**
-	 * Retrieves items from the collection 
-	 * that are listed in the list and that can be farmed on the specified day
-	 * 
-	 * @param allItems collection with all items
-	 * @param neededItems list of names of required items
-	 * @param dayOfWeek day of farm
-	 * @return required items, that can be farmed on the specified day 
-	 */
-	private FindIterable<Document> getFarmableItemsByDay(MongoCollection<Document> allItems, 
-														List<String> neededItems,
-														int dayOfWeek) {
-		Bson filters;
-		
-		if (dayOfWeek != Calendar.SUNDAY) {
-			filters = Filters.and(Filters.in("name", neededItems), 
-								  Filters.eq("day", Util.ConvertWeekDayToFarmDay(dayOfWeek)));
-		} else {
-			filters = Filters.in("name", neededItems);
-		}
-		return allItems.find(filters);
 	}
 	
 	/* Work with list of personal farm's targets */
@@ -145,7 +124,9 @@ public class Personal {
 		if (userInput == null) {
 			answer = "Ты не указал, что тебе нужно. Названия, если что - с английского HHW или из /help.";
 		} else {
-			Document item = getItemByNameOrTag(database.getCollection("items"), userInput);
+			DatabaseItemsMethods databaseItems = new DatabaseItemsMethods();
+			
+			Document item = databaseItems.getItemByNameOrTag(userInput);
 			
 			if (item == null) {
 				answer = "Ты неправильно указал, что тебе нужно. Названия бери с английского HHW или из /help.";
@@ -179,7 +160,9 @@ public class Personal {
 		if (userInput == null) {
 			answer = "Ты не указал, что тебе нужно. Названия, если что - с английского HHW или из /help.";
 		} else {
-			Document item = getItemByNameOrTag(database.getCollection("items"), userInput);
+			DatabaseItemsMethods databaseItems = new DatabaseItemsMethods();
+			
+			Document item = databaseItems.getItemByNameOrTag(userInput);
 			
 			if (item == null) {
 				answer = "Ты неправильно указал, что тебе нужно. Названия бери с английского HHW или из /help.";
@@ -199,19 +182,6 @@ public class Personal {
 		}
 		
 		return answer;
-	}
-	
-	private Document getItemByNameOrTag(MongoCollection<Document> items, 
-										String input) {
-		
-		String fieldName = "name"; // поле для поиска - "tag" или "name"
-		
-		/* Если текст размером с тег и большими буквами - то это тег */
-		if ((input.length() == 3)&&(input.toUpperCase().equals(input))) {
-			fieldName = "tag";
-		}
-		
-		return items.find(Filters.eq(fieldName, input)).first();
 	}
 	
 	/* Notes */

@@ -46,6 +46,7 @@ public class Bot extends TelegramLongPollingBot {
 		this.setDatabase(mongoClient.getDatabase("genshinNotifier"));
 	}
 
+	@Override
 	public void onUpdateReceived(Update update) {
 		
 		if (update.hasMessage() && update.getMessage().hasText()) {
@@ -57,7 +58,9 @@ public class Bot extends TelegramLongPollingBot {
 			User author = message.getFrom();
 			
 			if (messageText.startsWith("/")) {
-				logger.info("Command {} from {}", messageText, author.getUserName());
+				String author_id = author.getUserName() == null ? author.getFirstName() 
+															    : author.getUserName();
+				logger.info("Command {} from {}", messageText, author_id);
 			}
 			
 			MessageParser parser = new MessageParser(database, messageText, chatId, author, this); 
@@ -67,6 +70,7 @@ public class Bot extends TelegramLongPollingBot {
 		
 	}
 
+	@Override
 	public String getBotUsername() {
 		return BOT_USERNAME;
 	}

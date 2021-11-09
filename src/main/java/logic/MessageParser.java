@@ -16,6 +16,7 @@ import com.mongodb.client.MongoDatabase;
 
 import lombok.Getter;
 import lombok.Setter;
+import util.Util;
 
 public class MessageParser {
 	
@@ -83,6 +84,8 @@ public class MessageParser {
 			}
 			String argument = arr.length > 1 ? arr[1] : null;
 	
+			
+			
 			switch (command) {
 			
 				case "/help": {
@@ -99,13 +102,7 @@ public class MessageParser {
 				case "/global_farm": {
 					try {
 						if (dayOfWeek != Calendar.SUNDAY) {
-							String nameOfFile;
-							
-							if (dayOfWeek != Calendar.SATURDAY) {
-								nameOfFile = Util.ConvertWeekDayToFarmDay(dayOfWeek)+".jpg";
-							} else {
-								nameOfFile = "6.jpg";
-							}
+							String nameOfFile = Util.GetPictureFileNameByDay(dayOfWeek);
 									
 							sendPhoto(new File(getClass()
 												.getClassLoader()
