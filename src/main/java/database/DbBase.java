@@ -14,7 +14,7 @@ import lombok.NonNull;
 public class DbBase {
 	private static DbBase instance;
 	
-	private MongoDatabase database; 
+	private final MongoDatabase database; 
 	
 	public static DbBase getDatabase(@NonNull String dbUser, @NonNull String dbPass) {
 		if (instance == null) {

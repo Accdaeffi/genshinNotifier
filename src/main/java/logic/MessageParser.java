@@ -29,7 +29,6 @@ public class MessageParser {
 	 * Main method of the class.
 	 */
 	public AbsCommand parseMessage(String messageText, 
-								   Long messageChatId, 
 								   User messageAuthor) {
 		
 		int dayOfWeek = Util.GetDayOfWeek();
@@ -119,8 +118,7 @@ public class MessageParser {
 			return commandHandler;
 		}
 		catch (Exception ex) {
-			String logString = String.format("Error during parsing command \"{}\"!", messageText);
-			logger.error(logString, ex);
+			logger.error("Error during parsing command {}!", messageText, ex);
 			return null;
 		}
 	}

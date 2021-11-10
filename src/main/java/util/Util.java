@@ -26,8 +26,6 @@ public class Util {
 			case Calendar.WEDNESDAY:
 			case Calendar.SATURDAY: result = 3;
 				break;
-			case Calendar.SUNDAY: result = 0;
-				break;
 			default: result = 0;
 		}
 		
@@ -43,10 +41,21 @@ public class Util {
 	public static String GetPictureFileNameByDay(int dayOfWeek) {
 		String nameOfFile;
 		
-		if (dayOfWeek != Calendar.SATURDAY) {
-			nameOfFile = Util.ConvertWeekDayToFarmDay(dayOfWeek)+".jpg";
-		} else {
+		switch (dayOfWeek) {
+		case Calendar.MONDAY:
+		case Calendar.THURSDAY:
+			nameOfFile = "1.jpg";
+			break;
+		case Calendar.TUESDAY:
+		case Calendar.FRIDAY:
+			nameOfFile = "2.jpg";
+			break;
+		case Calendar.WEDNESDAY:
+			nameOfFile = "3.jpg";
+		case Calendar.SATURDAY:
 			nameOfFile = "6.jpg";
+		default:
+			nameOfFile = "error"; // TODO: replace with custom exception
 		}
 		
 		return nameOfFile;

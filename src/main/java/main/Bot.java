@@ -21,6 +21,8 @@ import logic.commands.AbsCommand;
 public class Bot extends TelegramLongPollingBot {
 	
 	private final static Logger logger = LoggerFactory.getLogger(Bot.class);
+	
+	private MessageParser commandParser = MessageParser.getParser(); 
 
 	private final String BOT_USERNAME;
 	private final String BOT_TOKEN;
@@ -50,8 +52,7 @@ public class Bot extends TelegramLongPollingBot {
 			}
 			
 			/* Parsing command */
-			MessageParser parser = MessageParser.getParser();
-			AbsCommand commandHandler = parser.parseMessage(messageText, chatId, author);
+			AbsCommand commandHandler = commandParser.parseMessage(messageText, author);
 			
 			/* Executing command */
 			if (commandHandler != null) {
@@ -68,8 +69,7 @@ public class Bot extends TelegramLongPollingBot {
 					}
 				} 
 				catch (Exception ex) {
-					String logString = String.format("Error during executing command \"{}\"!", messageText);
-					logger.error(logString, ex);
+					logger.error("Error during executing command {}!", messageText, ex);
 				}
 			}
 

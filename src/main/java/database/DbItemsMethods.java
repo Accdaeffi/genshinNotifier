@@ -21,7 +21,6 @@ public class DbItemsMethods {
 	 * Retrieve items from the collection 
 	 * that are listed in the list and that can be farmed on the specified day
 	 * 
-	 * @param allItems collection with all items
 	 * @param neededItems list of names of required items
 	 * @param dayOfWeek day of farm
 	 * @return required items, that can be farmed on the specified day 
