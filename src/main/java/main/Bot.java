@@ -20,7 +20,7 @@ import logic.commands.AbsCommand;
 
 public class Bot extends TelegramLongPollingBot {
 	
-	final static Logger logger = LoggerFactory.getLogger(Bot.class);
+	private final static Logger logger = LoggerFactory.getLogger(Bot.class);
 
 	private final String BOT_USERNAME;
 	private final String BOT_TOKEN;
@@ -44,24 +44,32 @@ public class Bot extends TelegramLongPollingBot {
 			User author = message.getFrom();
 			
 			if (messageText.startsWith("/")) {
-				String authorId = author.getUserName() == null ? author.getFirstName() 
-															   : author.getUserName();
+				String authorId = (author.getUserName() == null) ? author.getFirstName() 
+															     : author.getUserName();
 				logger.info("Command {} from {}", messageText, authorId);
 			}
 			
+			/* Parsing command */
 			MessageParser parser = new MessageParser(messageText, chatId, author); 
-			
 			AbsCommand commandHandler = parser.parseMessage();
 			
+			/* Executing command */
 			if (commandHandler != null) {
-				Object result = commandHandler.execute();
-				
-				if (result instanceof String) {
-					sendMessage((String) result, chatId);
-				} else {
-					if (result instanceof File) {
-						sendPhoto((File) result, chatId);
+				try {
+					Object result = commandHandler.execute();
+					
+					/* XXX: Animation and Video is file too */
+					if (result instanceof String) {
+						sendMessage((String) result, chatId);
+					} else {
+						if (result instanceof File) {
+							sendPhoto((File) result, chatId);
+						}
 					}
+				} 
+				catch (Exception ex) {
+					String logString = String.format("Error during executing command \"{}\"!", messageText);
+					logger.error(logString, ex);
 				}
 			}
 
@@ -83,7 +91,6 @@ public class Bot extends TelegramLongPollingBot {
 		SendMessage outMsg = new SendMessage();
 		outMsg.setChatId(Long.toString(chatId));
 		outMsg.setText(answerText);
-		//outMsg.enableMarkdownV2(true);
 		try {
 			execute(outMsg);
 		} catch (TelegramApiException e) {

@@ -4,6 +4,8 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import logic.commands.*;
@@ -12,6 +14,8 @@ import logic.commands.personal.notes.*;
 import lombok.Getter;
 
 public class MessageParser {
+	
+	private final static Logger logger = LoggerFactory.getLogger(MessageParser.class);
 	
 	// Server time GMT+1, Domain restart time - 4:00 at server time
 	// So in GMT-3 timezone domain get changed at 0:00
@@ -53,13 +57,14 @@ public class MessageParser {
 	 * Main method of the class.
 	 */
 	public AbsCommand parseMessage() {
+		
 		try {
 			String arr[] = messageText.split(" ", 2);
 			String command = arr[0];
 			if (command.contains("@")) {
 					command = arr[0].substring(0, arr[0].indexOf("@"));
 			}
-			String argument = arr.length > 1 ? arr[1] : null;
+			String argument = (arr.length > 1) ? arr[1] : null;
 	
 			AbsCommand commandHandler;
 			
@@ -139,7 +144,8 @@ public class MessageParser {
 			return commandHandler;
 		}
 		catch (Exception ex) {
-			ex.printStackTrace();
+			String logString = String.format("Error during parsing command \"{}\"!", messageText);
+			logger.error(logString, ex);
 			return null;
 		}
 	}

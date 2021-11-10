@@ -18,7 +18,6 @@ public class DelItemPersonalCommand extends AbsPersonalCommand {
 	/**
 	 * Delete item from list of targets to farm
 	 * 
-	 * @param userInput - name or tag of item
 	 * @return Russian String with response message text 
 	 */
 	@Override

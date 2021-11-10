@@ -21,7 +21,6 @@ public class FarmPersonalCommand extends AbsPersonalCommand {
 	/**
 	 * Calculate result of a command to get the goals of today's personal farm
 	 * 
-	 * @param dayOfWeek farm day as a day of the week - according to Calendar.DAY_OF_WEEK
 	 * @return Russian String with response message text 
 	 */
 	@Override
