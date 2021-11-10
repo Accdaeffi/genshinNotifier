@@ -10,11 +10,12 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 
+import util.NoSuchItemException;
 import util.Util;
 
-public class DatabaseItemsMethods {
+public class DbItemsMethods {
 
-	private static MongoCollection<Document> items = DatabaseBase.getDatabase().getItems();
+	private MongoCollection<Document> items = DbBase.getDatabase().getItems();
 	
 	/**
 	 * Retrieve items from the collection 
@@ -41,19 +42,26 @@ public class DatabaseItemsMethods {
 	/**
 	 * Retrieve item from database by it name or tag 
 	 * 
-	 * @param input - tag or name of item
+	 * @param itemNameOrTag tag or name of item
 	 * @return item
+	 * @throws NoSuchItemException if unknown name or tag
 	 */
 	
-	public Document getItemByNameOrTag(String input) {
+	public Document getItemByNameOrTag(String itemNameOrTag) throws NoSuchItemException {
 
 		String fieldName = "name"; // поле для поиска - "tag" или "name"
 		
 		/* Если текст размером с тег и большими буквами - то это тег */
-		if ((input.length() == 3)&&(input.toUpperCase().equals(input))) {
-		fieldName = "tag";
+		if ((itemNameOrTag.length() == 3)&&(itemNameOrTag.toUpperCase().equals(itemNameOrTag))) {
+			fieldName = "tag";
 		}
 		
-		return items.find(Filters.eq(fieldName, input)).first();
+		Document item = items.find(Filters.eq(fieldName, itemNameOrTag)).first();
+		
+		if (item == null) {
+			throw new NoSuchItemException();
+		}
+				
+		return item;
 	}
 }

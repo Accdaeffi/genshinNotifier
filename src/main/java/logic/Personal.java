@@ -1,22 +1,15 @@
 package logic;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.bson.Document;
-import org.bson.conversions.Bson;
 
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
-
-import database.DatabaseItemsMethods;
+import database.DbItemsMethods;
+import database.DbUsersMethods;
 import lombok.Getter;
 import lombok.Setter;
+import util.NoSuchItemException;
 
 public class Personal {
 
@@ -24,13 +17,8 @@ public class Personal {
 	@Setter
 	private Long userId;
 	
-	@Setter
-	@Getter
-	private MongoDatabase database;
-	
-	protected Personal(Long id,  MongoDatabase database) {
+	protected Personal(Long id) {
 		this.userId = id;
-		this.database = database;
 	}
 	
 	/* Personal farm */
@@ -44,20 +32,18 @@ public class Personal {
 	protected String getPersonalFarm(int dayOfWeek) {
 		StringBuilder answer = new StringBuilder();
 		
-		MongoCollection<Document> users = database.getCollection("users");
-		Document user = getOrCreateUserByTelegramId(users, userId);
+		DbUsersMethods databaseUsers = new DbUsersMethods(); 
+		Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
 		
 		if (user.getList("items", String.class).isEmpty()) {
 			answer.append("Я не знаю, по каким предметам тебе нужна информация.");
 		} else {
 			List<String> userItems = user.getList("items", String.class);
-		
 			List<String> todayFarmUserItems = new LinkedList<>();
 			
-			DatabaseItemsMethods databaseItems = new DatabaseItemsMethods();
-			
+			DbItemsMethods databaseItems = new DbItemsMethods();
 			databaseItems.getFarmableItemsByDay(userItems, dayOfWeek)
-			.forEach(item -> todayFarmUserItems.add(item.getString("name")));
+				         .forEach(item -> todayFarmUserItems.add(item.getString("name")));
 			
 			if (todayFarmUserItems.isEmpty()) {
 				answer.append("Сегодня тебе ничего не нужно фармить!");
@@ -65,9 +51,11 @@ public class Personal {
 				
 				List<String> tomorrowFarmUserItems = new LinkedList<>();
 				
+				/* get next day of week */
 				int nextDayOfWeek = dayOfWeek%7+1;
+				
 				databaseItems.getFarmableItemsByDay(userItems, nextDayOfWeek)
-					.forEach(item -> tomorrowFarmUserItems.add(item.getString("name")));
+						     .forEach(item -> tomorrowFarmUserItems.add(item.getString("name")));
 				
 				if (tomorrowFarmUserItems.isEmpty()) {
 					answer.append("И завтра, кстати, тоже.");
@@ -96,8 +84,8 @@ public class Personal {
 	protected String list() {
 		StringBuilder answer = new StringBuilder();
 		
-		MongoCollection<Document> users = database.getCollection("users");
-		Document user = getOrCreateUserByTelegramId(users, userId);
+		DbUsersMethods databaseUsers = new DbUsersMethods(); 
+		Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
 		
 		if (user.getList("items", String.class).isEmpty()) {
 			answer.append("Ты пока не нацелен на прокачку ни одного предмета!.");
@@ -124,24 +112,18 @@ public class Personal {
 		if (userInput == null) {
 			answer = "Ты не указал, что тебе нужно. Названия, если что - с английского HHW или из /help.";
 		} else {
-			DatabaseItemsMethods databaseItems = new DatabaseItemsMethods();
-			
-			Document item = databaseItems.getItemByNameOrTag(userInput);
-			
-			if (item == null) {
-				answer = "Ты неправильно указал, что тебе нужно. Названия бери с английского HHW или из /help.";
-			} else {
-				String itemName = item.getString("name");
-				MongoCollection<Document> users = database.getCollection("users");
-				Document user = getOrCreateUserByTelegramId(users, userId);
-				
-				if (user.getList("items", String.class).contains(itemName)) {
-					answer = "Ты уже добавил этот предмет!";
-				} else {
-					Bson update = Updates.push("items", itemName);
-					users.updateOne(Filters.eq("id", userId), update);
+			try {
+				DbUsersMethods databaseUsers = new DbUsersMethods(); 
+				Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
+					
+				if (databaseUsers.addItem(user, userInput)) {
 					answer = "Успешно добавлено!";
+				} else {
+					answer = "Ты уже добавил этот предмет!";
 				}
+			}
+			catch (NoSuchItemException e) {
+				answer = "Ты неправильно указал, что тебе нужно. Названия бери с английского HHW или из /help.";
 			}
 		}
 		
@@ -160,24 +142,18 @@ public class Personal {
 		if (userInput == null) {
 			answer = "Ты не указал, что тебе нужно. Названия, если что - с английского HHW или из /help.";
 		} else {
-			DatabaseItemsMethods databaseItems = new DatabaseItemsMethods();
-			
-			Document item = databaseItems.getItemByNameOrTag(userInput);
-			
-			if (item == null) {
-				answer = "Ты неправильно указал, что тебе нужно. Названия бери с английского HHW или из /help.";
-			} else {
-				String itemName = item.getString("name");
-				MongoCollection<Document> users = database.getCollection("users");
-				Document user = getOrCreateUserByTelegramId(users, userId);
-				
-				if (!user.getList("items", String.class).contains(itemName)) {
-					answer = "Нельзя удалить то, что уже удалено!";
-				} else {
-					Bson update = Updates.pull("items", itemName);
-					users.updateOne(Filters.eq("id", userId), update);
+			try {
+				DbUsersMethods databaseUsers = new DbUsersMethods(); 
+				Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
+					
+				if (databaseUsers.delItem(user, userInput)) {
 					answer = "Успешно удалено!";
+				} else {
+					answer = "Нельзя удалить то, чего нет!";
 				}
+			}
+			catch (NoSuchItemException e) {
+				answer = "Ты неправильно указал, что тебе нужно. Названия бери с английского HHW или из /help.";
 			}
 		}
 		
@@ -200,8 +176,8 @@ public class Personal {
 		} else {
 			key = key.trim();
 				
-			MongoCollection<Document> users = database.getCollection("users");
-			Document user = getOrCreateUserByTelegramId(users, userId);
+			DbUsersMethods databaseUsers = new DbUsersMethods(); 
+			Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
 				
 			Document userNotes = (Document) user.get("notes");
 				
@@ -225,8 +201,8 @@ public class Personal {
 	protected String getAllNotes() {
 		StringBuilder answer = new StringBuilder();
 		
-		MongoCollection<Document> users = database.getCollection("users");		
-		Document user = getOrCreateUserByTelegramId(users, userId);
+		DbUsersMethods databaseUsers = new DbUsersMethods(); 
+		Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
 				
 		Document userNotes = (Document) user.get("notes");
 				
@@ -264,21 +240,15 @@ public class Personal {
 				String key = arr[0].trim();
 				String value = arr[1].trim();
 				
-				MongoCollection<Document> users = database.getCollection("users");
-				Document user = getOrCreateUserByTelegramId(users, userId);
+				DbUsersMethods databaseUsers = new DbUsersMethods(); 
+				Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
 				
-				Document userNotes = (Document) user.get("notes");
+				String previousValue = databaseUsers.addOrReplaceNote(user, key, value);
 				
-				String result = userNotes.getString(key);
-				
-				if (result != null) {
-					userNotes.put(key, value);
-					users.replaceOne(Filters.eq("id", userId), user);
-					answer = "Успешно заменено!";
-				} else {
-					userNotes.put(key, value);
-					users.replaceOne(Filters.eq("id", userId), user);
+				if (previousValue == null) {
 					answer = "Успешно добавлено!";
+				} else {
+					answer = "Успешно заменено!";
 				}
 			}
 		}
@@ -300,16 +270,10 @@ public class Personal {
 		} else {
 			key = key.trim();
 				
-			MongoCollection<Document> users = database.getCollection("users");
-			Document user = getOrCreateUserByTelegramId(users, userId);
+			DbUsersMethods databaseUsers = new DbUsersMethods(); 
+			Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
 				
-			Document userNotes = (Document) user.get("notes");
-				
-			String value = userNotes.getString(key);
-			
-			if (value != null) {
-				userNotes.remove(key);
-				users.replaceOne(Filters.eq("id", userId), user);
+			if (databaseUsers.deleteNote(user, key)) {
 				answer = "Успешно удалено!";
 			} else {
 				answer = "Хотел бы я сказать, что успешно удалено, но такой записи вообще не было.";
@@ -317,22 +281,5 @@ public class Personal {
 		}
 		
 		return answer;
-	}
-	
-	private Document getOrCreateUserByTelegramId(MongoCollection<Document> users, 
-												 Long userId) {
-		Document user = users.find(Filters.eq("id", userId)).first();
-		if (user == null) {
-			user = createUser(userId);
-			users.insertOne(user);
-		}
-		
-		return user;
-	}
-	
-	private Document createUser(Long userId) {
-		return new Document().append("id", userId)
-    			 			 .append("items", new ArrayList<String>())
-    			 			 .append("notes", new Document());
 	}
 }

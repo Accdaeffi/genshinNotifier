@@ -11,23 +11,23 @@ import com.mongodb.client.MongoDatabase;
 
 import lombok.NonNull;
 
-public class DatabaseBase {
-	private static DatabaseBase instance;
+public class DbBase {
+	private static DbBase instance;
 	
 	private MongoDatabase database; 
 	
-	public static DatabaseBase getDatabase(@NonNull String dbUser, @NonNull String dbPass) {
+	public static DbBase getDatabase(@NonNull String dbUser, @NonNull String dbPass) {
 		if (instance == null) {
-			instance = new DatabaseBase(dbUser, dbPass);
+			instance = new DbBase(dbUser, dbPass);
 		}
 		return instance;
 	}
 	
-	protected static DatabaseBase getDatabase() {
+	protected static DbBase getDatabase() {
 		return instance;
 	}
 
-	private DatabaseBase(String dbUser, String dbPass) {
+	private DbBase(String dbUser, String dbPass) {
 		ConnectionString connectionString = new ConnectionString("mongodb+srv://"+dbUser+":"+dbPass+"@dnoskov.emlnn.mongodb.net/DNoskov?retryWrites=true&w=majority");
 		MongoClientSettings settings = MongoClientSettings.builder()
 		        .applyConnectionString(connectionString)

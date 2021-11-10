@@ -12,10 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import com.mongodb.client.MongoDatabase;
-
 import lombok.Getter;
-import lombok.Setter;
 import util.Util;
 
 public class MessageParser {
@@ -24,45 +21,34 @@ public class MessageParser {
 	// So in GMT-3 timezone domain get changed at 0:00
 	private final String TIME_OFFSET = "-3"; 
 
-	@Setter
-	@Getter
-	private MongoDatabase database;
-
 	// who sent message with command
-	@Setter
 	@Getter
-	private User messageAuthor;
+	private final User messageAuthor;
 	
 	// where message was sent
-	@Setter
 	@Getter
-	private Long messageChatId;
+	private final Long messageChatId;
 	
 	// text of the message
-	@Setter
 	@Getter
-	private String messageText;
+	private final String messageText;
 	
 	// today day of week
-	@Setter
 	@Getter
-	private int dayOfWeek;
+	private final int dayOfWeek;
 	
 	// use this to send messages 
-	@Setter
 	@Getter
-	private AbsSender sender;
+	private final AbsSender sender;
 	
-	public MessageParser(MongoDatabase database, 
-						 String messageText, 
+	public MessageParser(String messageText, 
 						 Long chatId, 
 						 User author,
 						 AbsSender sender) {
 		
-		this.setDatabase(database);
-		this.setMessageText(messageText);
-		this.setMessageChatId(chatId);
-		this.setMessageAuthor(author);
+		this.messageText = messageText;
+		this.messageChatId = chatId;
+		this.messageAuthor = author;
 		this.sender = sender;
 		
 		Calendar today = Calendar.getInstance(
@@ -125,7 +111,7 @@ public class MessageParser {
 				{
 					String answerText;
 					
-					Personal personal = new Personal(messageAuthor.getId(), database);
+					Personal personal = new Personal(messageAuthor.getId());
 					answerText = personal.getPersonalFarm(dayOfWeek);
 				
 					sendMessage(answerText);
@@ -138,7 +124,7 @@ public class MessageParser {
 				{
 					String answerText;
 					
-					Personal personal = new Personal(messageAuthor.getId(), database);
+					Personal personal = new Personal(messageAuthor.getId());
 					answerText = personal.list();
 					
 					sendMessage(answerText);
@@ -152,7 +138,7 @@ public class MessageParser {
 					if (messageChatId<0) {		// если это пишется в чате
 						answerText = "Давай в личку, нечего чат засорять";
 					} else {
-						Personal personal = new Personal(messageAuthor.getId(), database);
+						Personal personal = new Personal(messageAuthor.getId());
 						answerText = personal.add(argument);
 					}
 					
@@ -167,7 +153,7 @@ public class MessageParser {
 					if (messageChatId<0) {		// если это пишется в чате
 						answerText = "Давай в личку, нечего чат засорять.";
 					} else {
-						Personal personal = new Personal(messageAuthor.getId(), database);
+						Personal personal = new Personal(messageAuthor.getId());
 						answerText = personal.del(argument);
 					}
 					
@@ -181,7 +167,7 @@ public class MessageParser {
 				{
 					String answerText;
 					
-					Personal personal = new Personal(messageAuthor.getId(), database);
+					Personal personal = new Personal(messageAuthor.getId());
 					answerText = personal.getNote(argument);
 					
 					sendMessage(answerText);
@@ -192,7 +178,7 @@ public class MessageParser {
 				{
 					String answerText;
 					
-					Personal personal = new Personal(messageAuthor.getId(), database);
+					Personal personal = new Personal(messageAuthor.getId());
 					answerText = personal.getAllNotes();
 					
 					sendMessage(answerText);
@@ -203,7 +189,7 @@ public class MessageParser {
 				{
 					String answerText;
 					
-					Personal personal = new Personal(messageAuthor.getId(), database);
+					Personal personal = new Personal(messageAuthor.getId());
 					answerText = personal.addNote(argument);
 					
 					sendMessage(answerText);
@@ -214,7 +200,7 @@ public class MessageParser {
 				{
 					String answerText;
 					
-					Personal personal = new Personal(messageAuthor.getId(), database);
+					Personal personal = new Personal(messageAuthor.getId());
 					answerText = personal.delNote(argument);
 					
 					sendMessage(answerText);
