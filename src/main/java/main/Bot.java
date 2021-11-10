@@ -50,8 +50,8 @@ public class Bot extends TelegramLongPollingBot {
 			}
 			
 			/* Parsing command */
-			MessageParser parser = new MessageParser(messageText, chatId, author); 
-			AbsCommand commandHandler = parser.parseMessage();
+			MessageParser parser = MessageParser.getParser();
+			AbsCommand commandHandler = parser.parseMessage(messageText, chatId, author);
 			
 			/* Executing command */
 			if (commandHandler != null) {

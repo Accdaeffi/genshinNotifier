@@ -1,9 +1,5 @@
 package logic;
 
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.TimeZone;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -11,52 +7,32 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import logic.commands.*;
 import logic.commands.personal.items.*;
 import logic.commands.personal.notes.*;
-import lombok.Getter;
+import util.Util;
 
 public class MessageParser {
 	
 	private final static Logger logger = LoggerFactory.getLogger(MessageParser.class);
 	
-	// Server time GMT+1, Domain restart time - 4:00 at server time
-	// So in GMT-3 timezone domain get changed at 0:00
-	private static final String TIME_OFFSET = "-3"; 
-
-	// who sent message with command
-	@Getter
-	private final User messageAuthor;
+	private static MessageParser instance;
 	
-	// where message was sent
-	@Getter
-	private final Long messageChatId;
-	
-	// text of the message
-	@Getter
-	private final String messageText;
-	
-	// today day of week
-	@Getter
-	private final int dayOfWeek;
-	
-	
-	public MessageParser(String messageText, 
-						 Long chatId, 
-						 User author) {
-		
-		this.messageText = messageText;
-		this.messageChatId = chatId;
-		this.messageAuthor = author;
-		
-		Calendar today = Calendar.getInstance(
-				TimeZone.getTimeZone(ZoneId.of(TIME_OFFSET))); 
-		
-		dayOfWeek = today.get(Calendar.DAY_OF_WEEK);
+	public static MessageParser getParser() {
+		if (instance == null) {
+			instance = new MessageParser();
+		}
+		return instance;
 	}
+	
+	private MessageParser() {}
 	
 	/**
 	 * Decide, which message was sent and execute necessary operations. 
 	 * Main method of the class.
 	 */
-	public AbsCommand parseMessage() {
+	public AbsCommand parseMessage(String messageText, 
+								   Long messageChatId, 
+								   User messageAuthor) {
+		
+		int dayOfWeek = Util.GetDayOfWeek();
 		
 		try {
 			String arr[] = messageText.split(" ", 2);
@@ -85,7 +61,6 @@ public class MessageParser {
 				case "/personal_farm":
 				{
 					commandHandler = new FarmPersonalCommand(messageAuthor.getId(), dayOfWeek);
-
 				}
 				break;
 				
