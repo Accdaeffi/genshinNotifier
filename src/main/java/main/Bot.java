@@ -1,15 +1,21 @@
 package main;
 
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import database.DbBase;
 import logic.MessageParser;
+import logic.commands.AbsCommand;
 
 
 public class Bot extends TelegramLongPollingBot {
@@ -43,8 +49,21 @@ public class Bot extends TelegramLongPollingBot {
 				logger.info("Command {} from {}", messageText, authorId);
 			}
 			
-			MessageParser parser = new MessageParser(messageText, chatId, author, this); 
-			parser.parseMessage();
+			MessageParser parser = new MessageParser(messageText, chatId, author); 
+			
+			AbsCommand commandHandler = parser.parseMessage();
+			
+			if (commandHandler != null) {
+				Object result = commandHandler.execute();
+				
+				if (result instanceof String) {
+					sendMessage((String) result, chatId);
+				} else {
+					if (result instanceof File) {
+						sendPhoto((File) result, chatId);
+					}
+				}
+			}
 
 		}
 		
@@ -58,6 +77,29 @@ public class Bot extends TelegramLongPollingBot {
 	@Override
 	public String getBotToken() {
 		return BOT_TOKEN;
+	}
+	
+	private void sendMessage(String answerText, Long chatId) {
+		SendMessage outMsg = new SendMessage();
+		outMsg.setChatId(Long.toString(chatId));
+		outMsg.setText(answerText);
+		//outMsg.enableMarkdownV2(true);
+		try {
+			execute(outMsg);
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void sendPhoto(File answerPhoto, Long chatId) {
+		SendPhoto photo = new SendPhoto();
+		photo.setPhoto(new InputFile(answerPhoto));
+		photo.setChatId(Long.toString(chatId));
+		try {
+			execute(photo);
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

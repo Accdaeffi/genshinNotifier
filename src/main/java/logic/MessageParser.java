@@ -1,25 +1,21 @@
 package logic;
 
-import java.io.File;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.bots.AbsSender;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import logic.commands.*;
+import logic.commands.personal.items.*;
+import logic.commands.personal.notes.*;
 import lombok.Getter;
-import util.Util;
 
 public class MessageParser {
 	
 	// Server time GMT+1, Domain restart time - 4:00 at server time
 	// So in GMT-3 timezone domain get changed at 0:00
-	private final String TIME_OFFSET = "-3"; 
+	private static final String TIME_OFFSET = "-3"; 
 
 	// who sent message with command
 	@Getter
@@ -37,19 +33,14 @@ public class MessageParser {
 	@Getter
 	private final int dayOfWeek;
 	
-	// use this to send messages 
-	@Getter
-	private final AbsSender sender;
 	
 	public MessageParser(String messageText, 
 						 Long chatId, 
-						 User author,
-						 AbsSender sender) {
+						 User author) {
 		
 		this.messageText = messageText;
 		this.messageChatId = chatId;
 		this.messageAuthor = author;
-		this.sender = sender;
 		
 		Calendar today = Calendar.getInstance(
 				TimeZone.getTimeZone(ZoneId.of(TIME_OFFSET))); 
@@ -61,7 +52,7 @@ public class MessageParser {
 	 * Decide, which message was sent and execute necessary operations. 
 	 * Main method of the class.
 	 */
-	public void parseMessage() {
+	public AbsCommand parseMessage() {
 		try {
 			String arr[] = messageText.split(" ", 2);
 			String command = arr[0];
@@ -70,51 +61,26 @@ public class MessageParser {
 			}
 			String argument = arr.length > 1 ? arr[1] : null;
 	
+			AbsCommand commandHandler;
 			
 			
 			switch (command) {
-			
 				case "/help": {
-					StringBuilder builder = new StringBuilder();
-					builder.append("Список команд бота:");
-					builder.append(System.lineSeparator());
-					builder.append(System.lineSeparator());
-					builder.append("https://telegra.ph/Spisok-komand-GenshinNotifierBot-11-06");
-					sendMessage(builder.toString());
+					commandHandler = new HelpCommand();
 				}
 				break;
 				
 				case "/gfarm":
 				case "/global_farm": {
-					try {
-						if (dayOfWeek != Calendar.SUNDAY) {
-							String nameOfFile = Util.GetPictureFileNameByDay(dayOfWeek);
-									
-							sendPhoto(new File(getClass()
-												.getClassLoader()
-												.getResource(nameOfFile)
-												.getFile()));
-							
-							
-						} else {
-							sendMessage("Фарми что угодно - сегодня воскресенье!");
-						}
-					}
-					catch (Exception ex) {
-						ex.printStackTrace();
-					}
+					commandHandler = new GlobalFarmCommand(dayOfWeek);
 				}
 				break;
 				
 				case "/pfarm":
 				case "/personal_farm":
 				{
-					String answerText;
-					
-					Personal personal = new Personal(messageAuthor.getId());
-					answerText = personal.getPersonalFarm(dayOfWeek);
-				
-					sendMessage(answerText);
+					commandHandler = new FarmPersonalCommand(messageAuthor.getId(), dayOfWeek);
+
 				}
 				break;
 				
@@ -122,42 +88,19 @@ public class MessageParser {
 				/*Work with personal farm targets*/
 				case "/list":
 				{
-					String answerText;
-					
-					Personal personal = new Personal(messageAuthor.getId());
-					answerText = personal.list();
-					
-					sendMessage(answerText);
+					commandHandler = new ListPersonalCommand(messageAuthor.getId());
 				}
 				break;
 				
 				case "/add":
 				{
-					String answerText;
-					
-					if (messageChatId<0) {		// если это пишется в чате
-						answerText = "Давай в личку, нечего чат засорять";
-					} else {
-						Personal personal = new Personal(messageAuthor.getId());
-						answerText = personal.add(argument);
-					}
-					
-					sendMessage(answerText);
+					commandHandler = new AddItemPersonalCommand(messageAuthor.getId(), argument);
 				}
 				break;
 				
 				case "/del":
 				{
-					String answerText;
-					
-					if (messageChatId<0) {		// если это пишется в чате
-						answerText = "Давай в личку, нечего чат засорять.";
-					} else {
-						Personal personal = new Personal(messageAuthor.getId());
-						answerText = personal.del(argument);
-					}
-					
-					sendMessage(answerText);
+					commandHandler = new DelItemPersonalCommand(messageAuthor.getId(), argument);
 				}
 				break;
 				
@@ -165,79 +108,39 @@ public class MessageParser {
 				/*Work with personal notes*/
 				case "/get_note":
 				{
-					String answerText;
-					
-					Personal personal = new Personal(messageAuthor.getId());
-					answerText = personal.getNote(argument);
-					
-					sendMessage(answerText);
+					commandHandler = new GetNotePersonalCommand(messageAuthor.getId(), argument);
 				}
 				break;
 				
 				case "/get_all_notes":
 				{
-					String answerText;
-					
-					Personal personal = new Personal(messageAuthor.getId());
-					answerText = personal.getAllNotes();
-					
-					sendMessage(answerText);
+					commandHandler = new GetAllNotesPersonalCommand(messageAuthor.getId());
 				}
 				break;
 				
 				case "/add_note":
 				{
-					String answerText;
-					
-					Personal personal = new Personal(messageAuthor.getId());
-					answerText = personal.addNote(argument);
-					
-					sendMessage(answerText);
+					commandHandler = new AddNotePersonalCommand(messageAuthor.getId(), argument);
 				}
 				break;
 				
 				case "/del_note":
 				{
-					String answerText;
-					
-					Personal personal = new Personal(messageAuthor.getId());
-					answerText = personal.delNote(argument);
-					
-					sendMessage(answerText);
+					commandHandler = new DelNotePersonalCommand(messageAuthor.getId(), argument);
 				}
 				break;
 				
 				default: {
-					
+					commandHandler = null;
 				}
 			}
+			
+			
+			return commandHandler;
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-		}
-		
-	}
-	
-	private void sendMessage(String answerText) {
-		SendMessage outMsg = new SendMessage();
-		outMsg.setChatId(getMessageChatId().toString());
-		outMsg.setText(answerText);
-		//outMsg.enableMarkdownV2(true);
-		try {
-			sender.execute(outMsg);
-		} catch (TelegramApiException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void sendPhoto(File answerPhoto) {
-		SendPhoto photo = new SendPhoto();
-		photo.setPhoto(new InputFile(answerPhoto));
-		photo.setChatId(getMessageChatId().toString());
-		try {
-			sender.execute(photo);
-		} catch (TelegramApiException e) {
-			e.printStackTrace();
+			return null;
 		}
 	}
 }

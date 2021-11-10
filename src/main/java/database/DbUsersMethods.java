@@ -51,7 +51,7 @@ public class DbUsersMethods {
 		DbItemsMethods databaseItems = new DbItemsMethods();
 		
 		Document item = databaseItems.getItemByNameOrTag(itemNameOrTag);
-		String itemName = item.getString("item");
+		String itemName = item.getString("name");
 		
 		if (user.getList("items", String.class).contains(itemName)) {
 			return false;
@@ -76,14 +76,14 @@ public class DbUsersMethods {
 		DbItemsMethods databaseItems = new DbItemsMethods();
 		
 		Document item = databaseItems.getItemByNameOrTag(itemNameOrTag);
-		String itemName = item.getString("item");
+		String itemName = item.getString("name");
 		
 		if (user.getList("items", String.class).contains(itemName)) {
-			result = false;
-		} else {
 			Bson update = Updates.pull("items", itemName);
 			users.updateOne(Filters.eq("id", user.get("id")), update);
 			result = true;
+		} else {
+			result = false;
 		}
 		
 		return result;

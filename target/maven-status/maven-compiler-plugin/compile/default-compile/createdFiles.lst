@@ -1,4 +1,3 @@
 logic\MessageParser.class
-main\GenshinNotifierApplication.class
 main\Bot.class
-logic\Personal.class
+main\GenshinNotifierApplication.class
