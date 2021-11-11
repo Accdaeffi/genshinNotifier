@@ -1,13 +1,8 @@
 package main;
 
-import java.io.File;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -18,10 +13,7 @@ import java.util.Optional;
 import database.DbBase;
 import logic.MessageParser;
 import logic.commands.AbsCommand;
-import util.response.FileResponse;
 import util.response.Response;
-import util.response.StringResponse;
-
 
 public class Bot extends TelegramLongPollingBot {
 	
@@ -66,21 +58,13 @@ public class Bot extends TelegramLongPollingBot {
 					Response<?> result = handler.execute();
 					
 					/* Sending result of command */
-					try {
-						if (result instanceof StringResponse) {
-							send((String) result.getContent(), chatId);
-						} else if (result instanceof FileResponse) {
-							
-							/* XXX: Animation and Video is file too */
-							send((File) result.getContent(), chatId);
-						}
-					}
-					catch (Exception ex) {
-						logger.error("Error sending result of command {} from {}!", messageText, author.getId(), ex);
-					}
+					result.send(this, chatId);
+				}
+				catch (TelegramApiException ex) {
+					logger.error("Error sending result of command {} from {}!", messageText, author.getId(), ex);
 				}
 				catch (Exception ex) {
-					logger.error("Error during executing command {}!", messageText, ex);
+					logger.error("Error during processing command {}!", messageText, ex);
 				}
 			});
 		
@@ -96,28 +80,6 @@ public class Bot extends TelegramLongPollingBot {
 	@Override
 	public String getBotToken() {
 		return BOT_TOKEN;
-	}
-	
-	private void send(String answerText, Long chatId) {
-		SendMessage outMsg = new SendMessage();
-		outMsg.setChatId(Long.toString(chatId));
-		outMsg.setText(answerText);
-		try {
-			execute(outMsg);
-		} catch (TelegramApiException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void send(File answerPhoto, Long chatId) {
-		SendPhoto photo = new SendPhoto();
-		photo.setPhoto(new InputFile(answerPhoto));
-		photo.setChatId(Long.toString(chatId));
-		try {
-			execute(photo);
-		} catch (TelegramApiException e) {
-			e.printStackTrace();
-		}
 	}
 
 }

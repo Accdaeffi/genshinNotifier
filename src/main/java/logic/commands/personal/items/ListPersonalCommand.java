@@ -37,7 +37,7 @@ public class ListPersonalCommand extends AbsPersonalCommand {
 			answer.append(".");
 		}
 		
-		return new StringResponse<>(answer.toString());
+		return new StringResponse(answer.toString());
 	}
 
 }

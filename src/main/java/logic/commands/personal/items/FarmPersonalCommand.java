@@ -68,7 +68,7 @@ public class FarmPersonalCommand extends AbsPersonalCommand {
 				answer.append(".");
 			}
 		}
-		return new StringResponse<>(answer.toString());
+		return new StringResponse(answer.toString());
 	}
 
 }

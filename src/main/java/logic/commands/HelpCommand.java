@@ -15,7 +15,7 @@ public class HelpCommand extends AbsCommand {
 		builder.append(System.lineSeparator());
 		builder.append("https://telegra.ph/Spisok-komand-GenshinNotifierBot-11-06");
 		
-		return new StringResponse<>(builder.toString());
+		return new StringResponse(builder.toString());
 	}
 
 }

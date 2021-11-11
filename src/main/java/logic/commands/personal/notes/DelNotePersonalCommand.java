@@ -40,6 +40,6 @@ public class DelNotePersonalCommand extends AbsPersonalCommand {
 			}
 		}
 		
-		return new StringResponse<>(answer);
+		return new StringResponse(answer);
 	}
 }

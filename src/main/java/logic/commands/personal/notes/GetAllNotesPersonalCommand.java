@@ -39,7 +39,7 @@ public class GetAllNotesPersonalCommand extends AbsPersonalCommand {
 											 System.lineSeparator())));
 		}
 		
-		return new StringResponse<>(answer.toString());
+		return new StringResponse(answer.toString());
 	}
 	
 

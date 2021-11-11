@@ -44,6 +44,6 @@ public class DelItemPersonalCommand extends AbsPersonalCommand {
 			}
 		}
 		
-		return new StringResponse<>(answer);
+		return new StringResponse(answer);
 	}
 }

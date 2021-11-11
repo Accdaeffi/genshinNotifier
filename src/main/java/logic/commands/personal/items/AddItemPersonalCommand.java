@@ -44,7 +44,7 @@ public class AddItemPersonalCommand extends AbsPersonalCommand {
 			}
 		}
 		
-		return new StringResponse<>(answer);
+		return new StringResponse(answer);
 	}
 
 }
