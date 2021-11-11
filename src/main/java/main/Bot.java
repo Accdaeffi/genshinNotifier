@@ -18,6 +18,7 @@ import java.util.Optional;
 import database.DbBase;
 import logic.MessageParser;
 import logic.commands.AbsCommand;
+import util.Response;
 
 
 public class Bot extends TelegramLongPollingBot {
@@ -59,18 +60,18 @@ public class Bot extends TelegramLongPollingBot {
 			/* Executing command */
 			optionalCommandHandler.ifPresent(handler -> {
 				try {
-					Object result = handler.execute();
+					
+					Response<?> result = handler.execute();
 					
 					/* Sending result of command */
+					Object response = result.getContent();
 					try {
-						if (result instanceof String) {
-							sendMessage((String) result, chatId);
-						} else {
+						if (response instanceof String) {
+							sendMessage((String) response, chatId);
+						} else if (response instanceof File) {
 							
 							/* XXX: Animation and Video is file too */
-							if (result instanceof File) {
-								sendPhoto((File) result, chatId);
-							}
+							sendPhoto((File) response, chatId);
 						}
 					}
 					catch (Exception ex) {

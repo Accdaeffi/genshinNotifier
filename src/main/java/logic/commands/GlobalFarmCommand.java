@@ -3,6 +3,7 @@ package logic.commands;
 import java.io.File;
 import java.util.Calendar;
 
+import util.Response;
 import util.Util;
 
 public class GlobalFarmCommand extends AbsCommand {
@@ -14,19 +15,23 @@ public class GlobalFarmCommand extends AbsCommand {
 	}
 
 	@Override
-	public Object execute() {
+	public Response<?> execute() {
+		Response<?> result;
+		
 		if (dayOfWeek != Calendar.SUNDAY) {
 			String nameOfFile = Util.GetPictureFileNameByDay(dayOfWeek);
 					
-			return new File(getClass()
-								.getClassLoader()
-								.getResource(nameOfFile)
-								.getFile());
+			result = new Response<File>(new File(getClass()
+												 .getClassLoader()
+												 .getResource(nameOfFile)
+												 .getFile()));
 			
 			
 		} else {
-			return new String("Фарми что угодно - сегодня воскресенье!");
+			result = new Response<String>("Фарми что угодно - сегодня воскресенье!");
 		}
+		
+		return result;
 	}
 
 }

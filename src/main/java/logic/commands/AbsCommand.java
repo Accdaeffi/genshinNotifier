@@ -1,6 +1,8 @@
 package logic.commands;
 
+import util.Response;
+
 public abstract class AbsCommand {
 	
-	public abstract Object execute();
+	public abstract Response<?> execute();
 }

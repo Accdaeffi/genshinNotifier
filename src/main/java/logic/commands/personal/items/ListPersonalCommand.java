@@ -6,6 +6,7 @@ import org.bson.Document;
 
 import database.DbUsersMethods;
 import logic.commands.personal.AbsPersonalCommand;
+import util.Response;
 
 public class ListPersonalCommand extends AbsPersonalCommand {
 
@@ -19,7 +20,7 @@ public class ListPersonalCommand extends AbsPersonalCommand {
 	 * @return Russian String with response message text 
 	 */
 	@Override
-	public String execute() {
+	public Response<String> execute() {
 		StringBuilder answer = new StringBuilder();
 		
 		DbUsersMethods databaseUsers = new DbUsersMethods(); 
@@ -35,7 +36,7 @@ public class ListPersonalCommand extends AbsPersonalCommand {
 			answer.append(".");
 		}
 		
-		return answer.toString();
+		return new Response<>(answer.toString());
 	}
 
 }

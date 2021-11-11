@@ -5,6 +5,7 @@ import org.bson.Document;
 import database.DbUsersMethods;
 import logic.commands.personal.AbsPersonalCommand;
 import util.NoSuchItemException;
+import util.Response;
 
 public class DelItemPersonalCommand extends AbsPersonalCommand {
 
@@ -21,7 +22,7 @@ public class DelItemPersonalCommand extends AbsPersonalCommand {
 	 * @return Russian String with response message text 
 	 */
 	@Override
-	public String execute() {
+	public Response<String> execute() {
 		String answer;
 		
 		if (itemNameOrTag == null) {
@@ -42,6 +43,6 @@ public class DelItemPersonalCommand extends AbsPersonalCommand {
 			}
 		}
 		
-		return answer;
+		return new Response<>(answer);
 	}
 }

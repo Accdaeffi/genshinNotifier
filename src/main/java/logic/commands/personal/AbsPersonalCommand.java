@@ -1,6 +1,7 @@
 package logic.commands.personal;
 
 import logic.commands.AbsCommand;
+import util.Response;
 
 public abstract class AbsPersonalCommand extends AbsCommand {
 
@@ -11,8 +12,6 @@ public abstract class AbsPersonalCommand extends AbsCommand {
 	}
 
 	@Override
-	public Object execute() {
-		return null;
-	}
+	public abstract Response<?> execute();
 
 }
