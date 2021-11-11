@@ -1,6 +1,6 @@
 package logic.commands;
 
-import util.Response;
+import util.response.Response;
 
 public abstract class AbsCommand {
 	

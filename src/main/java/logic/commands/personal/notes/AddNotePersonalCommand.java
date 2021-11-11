@@ -4,7 +4,8 @@ import org.bson.Document;
 
 import database.DbUsersMethods;
 import logic.commands.personal.AbsPersonalCommand;
-import util.Response;
+import util.response.Response;
+import util.response.StringResponse;
 
 public class AddNotePersonalCommand extends AbsPersonalCommand {
 
@@ -47,7 +48,7 @@ public class AddNotePersonalCommand extends AbsPersonalCommand {
 			}
 		}
 		
-		return new Response<>(answer);
+		return new StringResponse<>(answer);
 	}
 	
 }

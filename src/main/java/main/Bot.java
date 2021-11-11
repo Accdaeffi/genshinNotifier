@@ -18,7 +18,9 @@ import java.util.Optional;
 import database.DbBase;
 import logic.MessageParser;
 import logic.commands.AbsCommand;
-import util.Response;
+import util.response.FileResponse;
+import util.response.Response;
+import util.response.StringResponse;
 
 
 public class Bot extends TelegramLongPollingBot {
@@ -57,21 +59,20 @@ public class Bot extends TelegramLongPollingBot {
 			/* Parsing command */
 			Optional<AbsCommand> optionalCommandHandler = commandParser.parseMessage(messageText, author);
 			
-			/* Executing command */
 			optionalCommandHandler.ifPresent(handler -> {
 				try {
 					
+					/* Executing command */
 					Response<?> result = handler.execute();
 					
 					/* Sending result of command */
-					Object response = result.getContent();
 					try {
-						if (response instanceof String) {
-							sendMessage((String) response, chatId);
-						} else if (response instanceof File) {
+						if (result instanceof StringResponse) {
+							send((String) result.getContent(), chatId);
+						} else if (result instanceof FileResponse) {
 							
 							/* XXX: Animation and Video is file too */
-							sendPhoto((File) response, chatId);
+							send((File) result.getContent(), chatId);
 						}
 					}
 					catch (Exception ex) {
@@ -97,7 +98,7 @@ public class Bot extends TelegramLongPollingBot {
 		return BOT_TOKEN;
 	}
 	
-	private void sendMessage(String answerText, Long chatId) {
+	private void send(String answerText, Long chatId) {
 		SendMessage outMsg = new SendMessage();
 		outMsg.setChatId(Long.toString(chatId));
 		outMsg.setText(answerText);
@@ -108,7 +109,7 @@ public class Bot extends TelegramLongPollingBot {
 		}
 	}
 	
-	private void sendPhoto(File answerPhoto, Long chatId) {
+	private void send(File answerPhoto, Long chatId) {
 		SendPhoto photo = new SendPhoto();
 		photo.setPhoto(new InputFile(answerPhoto));
 		photo.setChatId(Long.toString(chatId));

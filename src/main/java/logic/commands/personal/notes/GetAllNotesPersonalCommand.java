@@ -4,7 +4,8 @@ import org.bson.Document;
 
 import database.DbUsersMethods;
 import logic.commands.personal.AbsPersonalCommand;
-import util.Response;
+import util.response.Response;
+import util.response.StringResponse;
 
 public class GetAllNotesPersonalCommand extends AbsPersonalCommand {
 	
@@ -38,7 +39,7 @@ public class GetAllNotesPersonalCommand extends AbsPersonalCommand {
 											 System.lineSeparator())));
 		}
 		
-		return new Response<>(answer.toString());
+		return new StringResponse<>(answer.toString());
 	}
 	
 

@@ -8,7 +8,8 @@ import org.bson.Document;
 import database.DbItemsMethods;
 import database.DbUsersMethods;
 import logic.commands.personal.AbsPersonalCommand;
-import util.Response;
+import util.response.Response;
+import util.response.StringResponse;
 
 public class FarmPersonalCommand extends AbsPersonalCommand {
 	
@@ -67,7 +68,7 @@ public class FarmPersonalCommand extends AbsPersonalCommand {
 				answer.append(".");
 			}
 		}
-		return new Response<>(answer.toString());
+		return new StringResponse<>(answer.toString());
 	}
 
 }

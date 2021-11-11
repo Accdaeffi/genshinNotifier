@@ -1,7 +1,7 @@
 package logic.commands.personal;
 
 import logic.commands.AbsCommand;
-import util.Response;
+import util.response.Response;
 
 public abstract class AbsPersonalCommand extends AbsCommand {
 

@@ -4,7 +4,8 @@ import org.bson.Document;
 
 import database.DbUsersMethods;
 import logic.commands.personal.AbsPersonalCommand;
-import util.Response;
+import util.response.Response;
+import util.response.StringResponse;
 
 public class DelNotePersonalCommand extends AbsPersonalCommand {
 
@@ -39,6 +40,6 @@ public class DelNotePersonalCommand extends AbsPersonalCommand {
 			}
 		}
 		
-		return new Response<>(answer);
+		return new StringResponse<>(answer);
 	}
 }

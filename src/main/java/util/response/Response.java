@@ -1,8 +1,8 @@
-package util;
+package util.response;
 
-public class Response<T> {
+public abstract class Response<T> {
 
-	private final T responseContent;
+	protected final T responseContent;
 	
 	public Response(T responseContent) {
 		this.responseContent = responseContent;

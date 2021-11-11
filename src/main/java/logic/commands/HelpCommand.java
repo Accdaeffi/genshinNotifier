@@ -1,6 +1,7 @@
 package logic.commands;
 
-import util.Response;
+import util.response.Response;
+import util.response.StringResponse;
 
 public class HelpCommand extends AbsCommand {
 	
@@ -14,7 +15,7 @@ public class HelpCommand extends AbsCommand {
 		builder.append(System.lineSeparator());
 		builder.append("https://telegra.ph/Spisok-komand-GenshinNotifierBot-11-06");
 		
-		return new Response<>(builder.toString());
+		return new StringResponse<>(builder.toString());
 	}
 
 }
