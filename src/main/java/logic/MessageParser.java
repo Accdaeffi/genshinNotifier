@@ -1,5 +1,7 @@
 package logic;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -28,7 +30,7 @@ public class MessageParser {
 	 * Decide, which message was sent and execute necessary operations. 
 	 * Main method of the class.
 	 */
-	public AbsCommand parseMessage(String messageText, 
+	public Optional<AbsCommand> parseMessage(String messageText, 
 								   User messageAuthor) {
 		
 		int dayOfWeek = Util.GetDayOfWeek();
@@ -114,7 +116,7 @@ public class MessageParser {
 				}
 			}
 			
-			return commandHandler;
+			return Optional.ofNullable(commandHandler);
 		}
 		catch (Exception ex) {
 			logger.error("Error during parsing command {}!", messageText, ex);

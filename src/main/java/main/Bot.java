@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import database.DbBase;
 import logic.MessageParser;
@@ -54,28 +54,34 @@ public class Bot extends TelegramLongPollingBot {
 			}
 			
 			/* Parsing command */
-			Optional<AbsCommand> optionalCommandHandler = Optional.of(commandParser.parseMessage(messageText, author));
+			Optional<AbsCommand> optionalCommandHandler = commandParser.parseMessage(messageText, author);
 			
 			/* Executing command */
-			if (optionalCommandHandler.isPresent()) {
+			optionalCommandHandler.ifPresent(handler -> {
 				try {
-					AbsCommand commandHandler = optionalCommandHandler.get();
-					Object result = commandHandler.execute();
+					Object result = handler.execute();
 					
-					/* XXX: Animation and Video is file too */
-					if (result instanceof String) {
-						sendMessage((String) result, chatId);
-					} else {
-						if (result instanceof File) {
-							sendPhoto((File) result, chatId);
+					/* Sending result of command */
+					try {
+						if (result instanceof String) {
+							sendMessage((String) result, chatId);
+						} else {
+							
+							/* XXX: Animation and Video is file too */
+							if (result instanceof File) {
+								sendPhoto((File) result, chatId);
+							}
 						}
 					}
-				} 
+					catch (Exception ex) {
+						logger.error("Error sending result of command {} from {}!", messageText, author.getId(), ex);
+					}
+				}
 				catch (Exception ex) {
 					logger.error("Error during executing command {}!", messageText, ex);
 				}
-			}
-
+			});
+		
 		}
 		
 	}
