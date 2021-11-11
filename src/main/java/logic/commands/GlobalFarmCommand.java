@@ -7,7 +7,7 @@ import util.Util;
 
 public class GlobalFarmCommand extends AbsCommand {
 
-	int dayOfWeek;
+	private final int dayOfWeek;
 	
 	public GlobalFarmCommand(int dayOfWeek) {
 		this.dayOfWeek = dayOfWeek;

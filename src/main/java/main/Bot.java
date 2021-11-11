@@ -13,6 +13,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import com.google.common.base.Optional;
+
 import database.DbBase;
 import logic.MessageParser;
 import logic.commands.AbsCommand;
@@ -22,7 +24,7 @@ public class Bot extends TelegramLongPollingBot {
 	
 	private final static Logger logger = LoggerFactory.getLogger(Bot.class);
 	
-	private MessageParser commandParser = MessageParser.getParser(); 
+	private final MessageParser commandParser = MessageParser.getParser(); 
 
 	private final String BOT_USERNAME;
 	private final String BOT_TOKEN;
@@ -52,11 +54,12 @@ public class Bot extends TelegramLongPollingBot {
 			}
 			
 			/* Parsing command */
-			AbsCommand commandHandler = commandParser.parseMessage(messageText, author);
+			Optional<AbsCommand> optionalCommandHandler = Optional.of(commandParser.parseMessage(messageText, author));
 			
 			/* Executing command */
-			if (commandHandler != null) {
+			if (optionalCommandHandler.isPresent()) {
 				try {
+					AbsCommand commandHandler = optionalCommandHandler.get();
 					Object result = commandHandler.execute();
 					
 					/* XXX: Animation and Video is file too */

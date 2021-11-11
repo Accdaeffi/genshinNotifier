@@ -114,7 +114,6 @@ public class MessageParser {
 				}
 			}
 			
-			
 			return commandHandler;
 		}
 		catch (Exception ex) {

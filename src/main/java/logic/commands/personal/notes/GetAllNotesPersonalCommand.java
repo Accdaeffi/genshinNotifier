@@ -6,7 +6,6 @@ import database.DbUsersMethods;
 import logic.commands.personal.AbsPersonalCommand;
 
 public class GetAllNotesPersonalCommand extends AbsPersonalCommand {
-
 	
 	public GetAllNotesPersonalCommand(long userId) {
 		super(userId);

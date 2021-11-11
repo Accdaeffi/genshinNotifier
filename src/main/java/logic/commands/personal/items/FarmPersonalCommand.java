@@ -11,7 +11,7 @@ import logic.commands.personal.AbsPersonalCommand;
 
 public class FarmPersonalCommand extends AbsPersonalCommand {
 	
-	private int dayOfWeek;
+	private final int dayOfWeek;
 	
 	public FarmPersonalCommand(long userId, int dayOfWeek) {
 		super(userId);
