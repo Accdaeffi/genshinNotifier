@@ -1,6 +1,5 @@
 package logic.commands;
 
-import util.response.Response;
 import util.response.StringResponse;
 
 public class HelpCommand extends AbsCommand {
@@ -8,7 +7,8 @@ public class HelpCommand extends AbsCommand {
 	public HelpCommand() {}
 
 	@Override
-	public Response<String> execute() {
+	public StringResponse execute() {
+		
 		StringBuilder builder = new StringBuilder();
 		builder.append("Список команд бота:");
 		builder.append(System.lineSeparator());

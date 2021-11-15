@@ -4,7 +4,6 @@ import org.bson.Document;
 
 import database.DbUsersMethods;
 import logic.commands.personal.AbsPersonalCommand;
-import util.response.Response;
 import util.response.StringResponse;
 
 public class DelNotePersonalCommand extends AbsPersonalCommand {
@@ -22,7 +21,7 @@ public class DelNotePersonalCommand extends AbsPersonalCommand {
 	 * @return Russian String with response message text 
 	 */
 	@Override
-	public Response<String> execute() {
+	public StringResponse execute() {
 		String answer;
 		
 		if (keyString == null) {

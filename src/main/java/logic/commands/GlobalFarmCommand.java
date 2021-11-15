@@ -13,7 +13,12 @@ public class GlobalFarmCommand extends AbsCommand {
 	private final int dayOfWeek;
 	
 	public GlobalFarmCommand(int dayOfWeek) {
-		this.dayOfWeek = dayOfWeek;
+		if ((dayOfWeek < Calendar.SUNDAY) || 	   // because Sunday is the start of the week
+				(dayOfWeek > Calendar.SATURDAY)) { // because Saturday is the end of the week
+			throw new IllegalArgumentException();
+		} else {
+			this.dayOfWeek = dayOfWeek;
+		}
 	}
 
 	@Override
@@ -30,7 +35,7 @@ public class GlobalFarmCommand extends AbsCommand {
 			
 			
 		} else {
-			result = new StringResponse("Фарми что угодно - сегодня воскресенье!");
+			result = new StringResponse("Фарми что угодно - сегодня воскресенье!"); // TODO: вынести строки в resource-файлы
 		}
 		
 		return result;

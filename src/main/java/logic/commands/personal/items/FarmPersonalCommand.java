@@ -8,7 +8,6 @@ import org.bson.Document;
 import database.DbItemsMethods;
 import database.DbUsersMethods;
 import logic.commands.personal.AbsPersonalCommand;
-import util.response.Response;
 import util.response.StringResponse;
 
 public class FarmPersonalCommand extends AbsPersonalCommand {
@@ -26,7 +25,7 @@ public class FarmPersonalCommand extends AbsPersonalCommand {
 	 * @return Russian String with response message text 
 	 */
 	@Override
-	public Response<String> execute() {
+	public StringResponse execute() {
 		StringBuilder answer = new StringBuilder();
 		
 		DbUsersMethods databaseUsers = new DbUsersMethods(); 

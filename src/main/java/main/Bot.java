@@ -42,31 +42,33 @@ public class Bot extends TelegramLongPollingBot {
 			Long chatId = message.getChatId();
 			User author = message.getFrom();
 			
-			if (messageText.startsWith("/")) {
+			if ((messageText.startsWith("/"))&& // if it is command
+				((messageText.contains(getBotUsername()))||(!messageText.contains("@")))) { // and for us or for all bots in group
 				String authorId = (author.getUserName() == null) ? author.getFirstName() 
 															     : author.getUserName();
 				logger.info("Command {} from {}", messageText, authorId);
+			
+			
+				/* Parsing command */
+				Optional<AbsCommand> optionalCommandHandler = commandParser.parseMessage(messageText, author);
+				
+				optionalCommandHandler.ifPresent(handler -> {
+					try {
+						
+						/* Executing command */
+						Response<?> result = handler.execute();
+						
+						/* Sending result of command */
+						result.send(this, chatId);
+					}
+					catch (TelegramApiException ex) {
+						logger.error("Error sending result of command {} from {}!", messageText, author.getId(), ex);
+					}
+					catch (Exception ex) {
+						logger.error("Error during processing command {}!", messageText, ex);
+					}
+				});
 			}
-			
-			/* Parsing command */
-			Optional<AbsCommand> optionalCommandHandler = commandParser.parseMessage(messageText, author);
-			
-			optionalCommandHandler.ifPresent(handler -> {
-				try {
-					
-					/* Executing command */
-					Response<?> result = handler.execute();
-					
-					/* Sending result of command */
-					result.send(this, chatId);
-				}
-				catch (TelegramApiException ex) {
-					logger.error("Error sending result of command {} from {}!", messageText, author.getId(), ex);
-				}
-				catch (Exception ex) {
-					logger.error("Error during processing command {}!", messageText, ex);
-				}
-			});
 		
 		}
 		

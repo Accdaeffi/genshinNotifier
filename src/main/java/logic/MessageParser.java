@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import logic.commands.*;
 import logic.commands.personal.items.*;
 import logic.commands.personal.notes.*;
+import lombok.NonNull;
 import util.Util;
 
 public class MessageParser {
@@ -30,8 +31,8 @@ public class MessageParser {
 	 * Decide, which message was sent and execute necessary operations. 
 	 * Main method of the class.
 	 */
-	public Optional<AbsCommand> parseMessage(String messageText, 
-								   User messageAuthor) {
+	public Optional<AbsCommand> parseMessage(@NonNull String messageText, 
+											 @NonNull User messageAuthor) {
 		
 		int dayOfWeek = Util.GetDayOfWeek();
 		
@@ -120,7 +121,7 @@ public class MessageParser {
 		}
 		catch (Exception ex) {
 			logger.error("Error during parsing command {}!", messageText, ex);
-			return null;
+			return Optional.ofNullable(null);
 		}
 	}
 }

@@ -42,20 +42,22 @@ public class Util {
 		String nameOfFile;
 		
 		switch (dayOfWeek) {
-		case Calendar.MONDAY:
-		case Calendar.THURSDAY:
-			nameOfFile = "1.jpg";
-			break;
-		case Calendar.TUESDAY:
-		case Calendar.FRIDAY:
-			nameOfFile = "2.jpg";
-			break;
-		case Calendar.WEDNESDAY:
-			nameOfFile = "3.jpg";
-		case Calendar.SATURDAY:
-			nameOfFile = "6.jpg";
-		default:
-			nameOfFile = "error"; // TODO: replace with custom exception
+			case Calendar.MONDAY:
+			case Calendar.THURSDAY:
+				nameOfFile = "1.jpg";
+				break;
+			case Calendar.TUESDAY:
+			case Calendar.FRIDAY:
+				nameOfFile = "2.jpg";
+				break;
+			case Calendar.WEDNESDAY:
+				nameOfFile = "3.jpg";
+				break;
+			case Calendar.SATURDAY:
+				nameOfFile = "6.jpg";
+				break;
+			default:
+				nameOfFile = "error"; // TODO: replace with custom exception
 		}
 		
 		return nameOfFile;
