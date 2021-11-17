@@ -9,6 +9,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
+import database.sources.DbBase;
 import util.NoSuchItemException;
 
 public class DbUsersMethods {

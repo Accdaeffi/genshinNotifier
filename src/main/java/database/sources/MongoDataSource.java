@@ -1,4 +1,4 @@
-package database;
+package database.sources;
 
 import org.bson.Document;
 
@@ -11,23 +11,23 @@ import com.mongodb.client.MongoDatabase;
 
 import lombok.NonNull;
 
-public class DbBase {
-	private static DbBase instance;
+public class MongoDataSource implements DataSource {
+	private static MongoDataSource instance;
 	
 	private final MongoDatabase database; 
 	
-	public static DbBase getDatabase(@NonNull String dbUser, @NonNull String dbPass) {
+	public static DataSource getDatabase(@NonNull String dbUser, @NonNull String dbPass) {
 		if (instance == null) {
-			instance = new DbBase(dbUser, dbPass);
+			instance = new MongoDataSource(dbUser, dbPass);
 		}
 		return instance;
 	}
 	
-	protected static DbBase getDatabase() {
+	public static MongoDataSource getDatabase() {
 		return instance;
 	}
 
-	private DbBase(String dbUser, String dbPass) {
+	private MongoDataSource(String dbUser, String dbPass) {
 		ConnectionString connectionString = new ConnectionString("mongodb+srv://"+dbUser+":"+dbPass+"@dnoskov.emlnn.mongodb.net/DNoskov?retryWrites=true&w=majority");
 		MongoClientSettings settings = MongoClientSettings.builder()
 		        .applyConnectionString(connectionString)
@@ -36,11 +36,11 @@ public class DbBase {
 		database = mongoClient.getDatabase("genshinNotifier");
 	}
 	
-	protected MongoCollection<Document> getItems() {
+	public MongoCollection<Document> getItems() {
 		return database.getCollection("items");
 	}
 	
-	protected MongoCollection<Document> getUsers() {
+	public MongoCollection<Document> getUsers() {
 		return database.getCollection("users");
 	}
 }

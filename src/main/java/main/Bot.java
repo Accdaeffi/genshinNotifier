@@ -8,9 +8,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import database.sources.MongoDataSource;
+
 import java.util.Optional;
 
-import database.DbBase;
 import logic.MessageParser;
 import logic.commands.AbsCommand;
 import util.response.Response;
@@ -28,7 +29,7 @@ public class Bot extends TelegramLongPollingBot {
 		this.BOT_USERNAME = botUserName;
 		this.BOT_TOKEN = botToken;
 		
-		DbBase.getDatabase(dbUser, dbPass);
+		Properties.dataSource = MongoDataSource.getDatabase(dbUser, dbPass);
 	}
 
 	@Override
