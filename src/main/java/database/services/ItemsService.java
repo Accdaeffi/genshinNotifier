@@ -14,7 +14,7 @@ public class ItemsService {
 	ItemsRepository repository;
 	
 	public ItemsService() {
-		repository = Properties.dataSource.getItemsRepository();
+		repository = Properties.getDataSource().getItemsRepository();
 	}
 	
 	/**

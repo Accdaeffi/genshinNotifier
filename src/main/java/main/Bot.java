@@ -29,7 +29,7 @@ public class Bot extends TelegramLongPollingBot {
 		this.BOT_USERNAME = botUserName;
 		this.BOT_TOKEN = botToken;
 		
-		Properties.dataSource = MongoDataSource.getDatabase(dbUser, dbPass);
+		Properties.setDataSource(MongoDataSource.getDatabase(dbUser, dbPass));
 	}
 
 	@Override

@@ -10,7 +10,7 @@ public class UsersService {
 	UsersRepository repository;
 	
 	public UsersService() {
-		repository = Properties.dataSource.getUsersRepository();
+		repository = Properties.getDataSource().getUsersRepository();
 	}
 	
 	/**
