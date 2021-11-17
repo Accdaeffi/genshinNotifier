@@ -1,10 +1,7 @@
 package logic.commands.personal.items;
 
-import java.util.List;
-
-import org.bson.Document;
-
-import database.DbUsersMethods;
+import database.dao.User;
+import database.services.UsersService;
 import logic.commands.personal.AbsPersonalCommand;
 import util.response.StringResponse;
 
@@ -23,16 +20,14 @@ public class ListPersonalCommand extends AbsPersonalCommand {
 	public StringResponse execute() {
 		StringBuilder answer = new StringBuilder();
 		
-		DbUsersMethods databaseUsers = new DbUsersMethods(); 
-		Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
+		UsersService usersService = new UsersService();
+		User user = usersService.getOrCreateUserByTelegramId(userId);
 		
-		if (user.getList("items", String.class).isEmpty()) {
+		if (user.getItems().isEmpty()) {
 			answer.append("Ты пока не нацелен на прокачку ни одного предмета!.");
-		} else {
-			List<String> userItems = user.getList("items", String.class);
-			
+		} else {			
 			answer.append("Ты нацелен на фарм ресурсов для: ");
-			answer.append(String.join(", ", userItems));
+			answer.append(String.join(", ", user.getItems()));
 			answer.append(".");
 		}
 		

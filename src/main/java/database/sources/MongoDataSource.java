@@ -1,14 +1,15 @@
 package database.sources;
 
-import org.bson.Document;
-
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import database.repositories.ItemsRepository;
+import database.repositories.UsersRepository;
+import database.repositories.mongo.MongoItemsRepository;
+import database.repositories.mongo.MongoUsersRepository;
 import lombok.NonNull;
 
 public class MongoDataSource implements DataSource {
@@ -35,12 +36,14 @@ public class MongoDataSource implements DataSource {
 		MongoClient mongoClient = MongoClients.create(settings);
 		database = mongoClient.getDatabase("genshinNotifier");
 	}
-	
-	public MongoCollection<Document> getItems() {
-		return database.getCollection("items");
+
+	@Override
+	public ItemsRepository getItemsRepository() {
+		return new MongoItemsRepository(database.getCollection("items"));
 	}
-	
-	public MongoCollection<Document> getUsers() {
-		return database.getCollection("users");
+
+	@Override
+	public UsersRepository getUsersRepository() {
+		return new MongoUsersRepository(database.getCollection("users"));
 	}
 }

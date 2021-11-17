@@ -1,8 +1,7 @@
 package logic.commands.personal.notes;
 
-import org.bson.Document;
-
-import database.DbUsersMethods;
+import database.dao.User;
+import database.services.UsersService;
 import logic.commands.personal.AbsPersonalCommand;
 import util.response.StringResponse;
 
@@ -29,12 +28,10 @@ public class GetNotePersonalCommand extends AbsPersonalCommand {
 		} else {
 			String key = keyString.trim();
 				
-			DbUsersMethods databaseUsers = new DbUsersMethods(); 
-			Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
+			UsersService usersService = new UsersService();
+			User user = usersService.getOrCreateUserByTelegramId(userId);			
 				
-			Document userNotes = (Document) user.get("notes");
-				
-			String value = userNotes.getString(key);
+			String value = user.getNotes().get(key);
 			
 			if (value != null) {
 				answer = String.format("Твоя запись: %s", value);

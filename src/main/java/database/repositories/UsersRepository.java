@@ -18,14 +18,45 @@ public interface UsersRepository {
 	 * 
 	 * @param userId - telegram id of user
 	 */
-	void createUserById(long userId);
+	public User createUserById(long userId);
 	
+	/**
+	 * Add item by its name or tag to user's list of targets of farm
+	 * 
+	 * @param user
+	 * @param itemNameOrTag 
+	 * @return true, if added
+	 * 		   false, if already exists
+	 */
 	public boolean addItem(User user, Item item);
 	
+	/**
+	 * Delete item by its name or tag from user's list of targets of farm
+	 * 
+	 * @param user
+	 * @param itemNameOrTag
+	 * @return true, if delete 
+	 * 		   false, if there are no such item
+	 */
 	public boolean delItem(User user, Item item);
 	
+	/**
+	 * Add or replace personal note 
+	 * 
+	 * @param user
+	 * @param key of the note
+	 * @param value text of the note 
+	 * @return previous value of such key or null, if new key
+	 */
 	public String addOrReplaceNote(User user, String key, String value);
 	
+	/**
+	 * Delete personal note by its key
+	 * 
+	 * @param user
+	 * @param key
+	 * @return previous value of such key or null, if such note didn't exist
+	 */
 	public String deleteNote(User user, String key);
 	
 }

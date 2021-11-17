@@ -1,8 +1,7 @@
 package logic.commands.personal.notes;
 
-import org.bson.Document;
-
-import database.DbUsersMethods;
+import database.dao.User;
+import database.services.UsersService;
 import logic.commands.personal.AbsPersonalCommand;
 import util.response.StringResponse;
 
@@ -21,18 +20,16 @@ public class GetAllNotesPersonalCommand extends AbsPersonalCommand {
 	public StringResponse execute() {
 		StringBuilder answer = new StringBuilder();
 		
-		DbUsersMethods databaseUsers = new DbUsersMethods(); 
-		Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
+		UsersService usersService = new UsersService();
+		User user = usersService.getOrCreateUserByTelegramId(userId);
 				
-		Document userNotes = (Document) user.get("notes");
-				
-		if (userNotes.size() == 0) {
+		if (user.getNotes().isEmpty()) {
 			answer.append("У тебя пока нет никаких заметок!");
 		} else {
 			answer.append(String.format("Твои заметки:%s%s", System.lineSeparator(), 
 															 System.lineSeparator()));
 			
-			userNotes.forEach((key,value) -> answer.append(
+			user.getNotes().forEach((key,value) -> answer.append(
 					String.format("%s:%s%s", key, 
 											 value, 
 											 System.lineSeparator())));

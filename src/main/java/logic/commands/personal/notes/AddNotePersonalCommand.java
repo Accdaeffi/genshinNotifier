@@ -1,8 +1,7 @@
 package logic.commands.personal.notes;
 
-import org.bson.Document;
-
-import database.DbUsersMethods;
+import database.dao.User;
+import database.services.UsersService;
 import logic.commands.personal.AbsPersonalCommand;
 import util.response.StringResponse;
 
@@ -34,10 +33,10 @@ public class AddNotePersonalCommand extends AbsPersonalCommand {
 				String key = arr[0].trim();
 				String value = arr[1].trim();
 				
-				DbUsersMethods databaseUsers = new DbUsersMethods(); 
-				Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
+				UsersService usersService = new UsersService();
+				User user = usersService.getOrCreateUserByTelegramId(userId);
 				
-				String previousValue = databaseUsers.addOrReplaceNote(user, key, value);
+				String previousValue = usersService.addOrReplaceNote(user, key, value);
 				
 				if (previousValue == null) {
 					answer = "Успешно добавлено!";

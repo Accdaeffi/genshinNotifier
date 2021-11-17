@@ -1,8 +1,7 @@
 package logic.commands.personal.items;
 
-import org.bson.Document;
-
-import database.DbUsersMethods;
+import database.dao.User;
+import database.services.UsersService;
 import logic.commands.personal.AbsPersonalCommand;
 import util.NoSuchItemException;
 import util.response.StringResponse;
@@ -29,10 +28,10 @@ public class DelItemPersonalCommand extends AbsPersonalCommand {
 			answer = "Ты не указал, что тебе нужно. Названия, если что - с английского HHW или из /help.";
 		} else {
 			try {
-				DbUsersMethods databaseUsers = new DbUsersMethods(); 
-				Document user = databaseUsers.getOrCreateUserByTelegramId(userId);
+				UsersService usersService = new UsersService();
+				User user = usersService.getOrCreateUserByTelegramId(userId);
 					
-				if (databaseUsers.delItem(user, itemNameOrTag)) {
+				if (usersService.delItem(user, itemNameOrTag)) {
 					answer = "Успешно удалено!";
 				} else {
 					answer = "Нельзя удалить то, чего нет!";

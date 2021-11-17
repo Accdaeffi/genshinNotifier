@@ -1,7 +1,11 @@
 package database.sources;
 
+import database.repositories.ItemsRepository;
+import database.repositories.UsersRepository;
+
 public interface DataSource {
-	public Object getItems();
 	
-	public Object getUsers();
+	public ItemsRepository getItemsRepository();
+	
+	public UsersRepository getUsersRepository();
 }

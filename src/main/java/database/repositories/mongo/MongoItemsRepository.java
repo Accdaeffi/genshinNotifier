@@ -9,25 +9,15 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 
 import database.dao.Item;
-import database.repositories.IncorrectDataSourceException;
 import database.repositories.ItemsRepository;
-import database.sources.DataSource;
-import database.sources.MongoDataSource;
-import main.Properties;
 import util.Util;
 
 public class MongoItemsRepository implements ItemsRepository {
 	
 	private MongoCollection<Document> items;
 	
-	public MongoItemsRepository () throws IncorrectDataSourceException {
-		DataSource dataSource = Properties.dataSource;
-		
-		if (dataSource instanceof MongoDataSource) {
-			items = ((MongoDataSource) dataSource).getItems();
-		} else {
-			throw new IncorrectDataSourceException();
-		}
+	public MongoItemsRepository(MongoCollection<Document> itemsCollection) {
+		this.items = itemsCollection;
 	}
 
 	@Override

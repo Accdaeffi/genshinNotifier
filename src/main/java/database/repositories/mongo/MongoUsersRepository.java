@@ -14,24 +14,14 @@ import com.mongodb.client.model.Updates;
 
 import database.dao.Item;
 import database.dao.User;
-import database.repositories.IncorrectDataSourceException;
 import database.repositories.UsersRepository;
-import database.sources.DataSource;
-import database.sources.MongoDataSource;
-import main.Properties;
 
 public class MongoUsersRepository implements UsersRepository {
 
 	private MongoCollection<Document> users;
 	
-	public MongoUsersRepository () throws IncorrectDataSourceException {
-		DataSource dataSource = Properties.dataSource;
-		
-		if (dataSource instanceof MongoDataSource) {
-			users = ((MongoDataSource) dataSource).getUsers();
-		} else {
-			throw new IncorrectDataSourceException();
-		}
+	public MongoUsersRepository (MongoCollection<Document> usersCollection) {
+		this.users = usersCollection;
 	}
 
 	@Override
@@ -42,11 +32,12 @@ public class MongoUsersRepository implements UsersRepository {
 	}
 
 	@Override
-	public void createUserById(long userId) {
+	public User createUserById(long userId) {
 		Document user =  new Document().append("id", userId)
 								.append("items", new ArrayList<String>())
 								.append("notes", new Document());
 		users.insertOne(user);
+		return userFromDocument(user);
 	}
 
 	@Override
