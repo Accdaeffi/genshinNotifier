@@ -20,9 +20,14 @@ public class User {
 	@Setter
 	private Map<String, String> notes;
 	
-	public User (long id, List<String> items, Map<String, String> notes) {
+	@Getter
+	@Setter
+	private Server server;
+	
+	public User (long id, List<String> items, Map<String, String> notes, String server) {
 		this.id = id;
 		this.items = items;
 		this.notes = notes;
+		this.server = Server.fromString(server);
 	}
 }

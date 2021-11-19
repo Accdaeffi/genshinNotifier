@@ -7,7 +7,7 @@ public final class Properties {
 	private static DataSource dataSource;
 	
 	public static void setDataSource(DataSource dataSource) {
-		if (dataSource == null) {
+		if (Properties.dataSource == null) {
 			Properties.dataSource = dataSource;
 		}
 	}

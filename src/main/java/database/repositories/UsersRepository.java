@@ -59,4 +59,5 @@ public interface UsersRepository {
 	 */
 	public String deleteNote(User user, String key);
 	
+	public boolean setServer(User user, String server);
 }

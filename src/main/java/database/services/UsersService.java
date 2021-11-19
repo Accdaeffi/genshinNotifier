@@ -1,6 +1,7 @@
 package database.services;
 
 import database.dao.Item;
+import database.dao.Server;
 import database.dao.User;
 import database.repositories.UsersRepository;
 import main.Properties;
@@ -86,6 +87,9 @@ public class UsersService {
 		return repository.deleteNote(user, key);
 	}
 	
-	
+	/* TODO: add comment */
+	public boolean setServer(User user, Server server) {
+		return repository.setServer(user, server.toString());
+	}
 
 }

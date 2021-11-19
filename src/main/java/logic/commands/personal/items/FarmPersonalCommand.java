@@ -7,15 +7,13 @@ import database.dao.User;
 import database.services.ItemsService;
 import database.services.UsersService;
 import logic.commands.personal.AbsPersonalCommand;
+import util.Util;
 import util.response.StringResponse;
 
 public class FarmPersonalCommand extends AbsPersonalCommand {
 	
-	private final int dayOfWeek;
-	
-	public FarmPersonalCommand(long userId, int dayOfWeek) {
+	public FarmPersonalCommand(long userId) {
 		super(userId);
-		this.dayOfWeek = dayOfWeek;
 	}
 
 	/**
@@ -29,6 +27,8 @@ public class FarmPersonalCommand extends AbsPersonalCommand {
 		
 		UsersService usersService = new UsersService();
 		User user = usersService.getOrCreateUserByTelegramId(userId);
+		
+		int dayOfWeek = Util.GetDayOfWeek(user.getServer().getTimezone());
 		
 		if (user.getItems().isEmpty()) {
 			answer.append("Я не знаю, по каким предметам тебе нужна информация.");

@@ -35,7 +35,8 @@ public class MongoUsersRepository implements UsersRepository {
 	public User createUserById(long userId) {
 		Document user =  new Document().append("id", userId)
 								.append("items", new ArrayList<String>())
-								.append("notes", new Document());
+								.append("notes", new Document())
+								.append("notes", new String());
 		users.insertOne(user);
 		return userFromDocument(user);
 	}
@@ -84,19 +85,27 @@ public class MongoUsersRepository implements UsersRepository {
 		return prevoiusValue;
 	}
 	
+	@Override
+	public boolean setServer(User user, String server) {
+		Bson filter = Filters.eq("id", user.getId());
+		Bson update = Updates.set("server", server);
+		return users.updateOne(filter, update).getModifiedCount() == 1;
+	}
+	
 	private User userFromDocument(Document userFromDatabase) {
 		User user = null;
 		
 		if (userFromDatabase != null) {	
 			long id = userFromDatabase.getLong("id");
 			List<String> items = userFromDatabase.getList("items", String.class);
+			String server = userFromDatabase.getString("server");
 			Map<String, String> notes = new HashMap<>(); 
 			((Document) userFromDatabase.get("notes"))
 				.entrySet()
 				.parallelStream()
 				.forEach(entry -> notes.put(entry.getKey(), (String) entry.getValue()));
 				
-			user = new User(id, items, notes);
+			user = new User(id, items, notes, server);
 		}
 		
 		return user;

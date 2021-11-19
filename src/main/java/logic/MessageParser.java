@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import logic.commands.*;
+import logic.commands.personal.SetServerPersonalCommand;
 import logic.commands.personal.items.*;
 import logic.commands.personal.notes.*;
 import lombok.NonNull;
-import util.Util;
 
 public class MessageParser {
 	
@@ -34,8 +34,6 @@ public class MessageParser {
 	public Optional<AbsCommand> parseMessage(@NonNull String messageText, 
 											 @NonNull User messageAuthor) {
 		
-		int dayOfWeek = Util.GetDayOfWeek();
-		
 		try {
 			String arr[] = messageText.split(" ", 2);
 			String command = arr[0];
@@ -55,14 +53,14 @@ public class MessageParser {
 				
 				case "/gfarm":
 				case "/global_farm": {
-					commandHandler = new GlobalFarmCommand(dayOfWeek);
+					commandHandler = new GlobalFarmCommand(messageAuthor.getId());
 				}
 				break;
 				
 				case "/pfarm":
 				case "/personal_farm":
 				{
-					commandHandler = new FarmPersonalCommand(messageAuthor.getId(), dayOfWeek);
+					commandHandler = new FarmPersonalCommand(messageAuthor.getId());
 				}
 				break;
 				
@@ -109,6 +107,12 @@ public class MessageParser {
 				case "/del_note":
 				{
 					commandHandler = new DelNotePersonalCommand(messageAuthor.getId(), argument);
+				}
+				break;
+				
+				case "/set_server":
+				{
+					commandHandler = new SetServerPersonalCommand(messageAuthor.getId());
 				}
 				break;
 				

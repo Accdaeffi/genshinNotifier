@@ -3,6 +3,7 @@ package main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -12,6 +13,7 @@ import database.sources.MongoDataSource;
 
 import java.util.Optional;
 
+import logic.CallbackParser;
 import logic.MessageParser;
 import logic.commands.AbsCommand;
 import util.response.Response;
@@ -21,6 +23,7 @@ public class Bot extends TelegramLongPollingBot {
 	private final static Logger logger = LoggerFactory.getLogger(Bot.class);
 	
 	private final MessageParser commandParser = MessageParser.getParser(); 
+	private final CallbackParser callbackParser = CallbackParser.getParser(); 
 
 	private final String BOT_USERNAME;
 	private final String BOT_TOKEN;
@@ -71,9 +74,39 @@ public class Bot extends TelegramLongPollingBot {
 				});
 			}
 		
+		} else if (update.hasCallbackQuery()) {
+			
+			CallbackQuery callback = update.getCallbackQuery();
+			
+			String messageText = callback.getData();
+			long chatId = callback.getMessage().getChatId();
+			int messageId = callback.getMessage().getMessageId();
+			User author = callback.getFrom();
+			
+			/* Parsing callback */
+			Optional<AbsCommand> optionalCallbackHandler = callbackParser.parseCallback(messageText, messageId, author);
+		
+			optionalCallbackHandler.ifPresent(handler -> {
+				try {
+					
+					/* Executing command */
+					Response<?> result = handler.execute();
+					
+					/* Sending result of command */
+					result.send(this, chatId);
+				}
+				catch (TelegramApiException ex) {
+					logger.error("Error sending result of callback {} from {}!", messageText, author.getId(), ex);
+				}
+				catch (Exception ex) {
+					logger.error("Error during processing callback {}!", messageText, ex);
+				}
+			});
 		}
 		
 	}
+	
+	
 
 	@Override
 	public String getBotUsername() {

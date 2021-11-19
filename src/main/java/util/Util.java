@@ -79,4 +79,10 @@ public class Util {
 		
 		return today.get(Calendar.DAY_OF_WEEK);
 	}
+	
+	public static int GetDayOfWeek(TimeZone timezone) {
+		Calendar today = Calendar.getInstance(timezone); 
+		
+		return today.get(Calendar.DAY_OF_WEEK);
+	}
 }

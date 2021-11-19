@@ -8,9 +8,12 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class FileResponse extends Response<File> {
+	
+	private final String caption; 
 
-	public FileResponse(File responseContent) {
+	public FileResponse(File responseContent, String caption) {
 		super(responseContent);
+		this.caption = caption;
 	}
 	
 	public File getContent() {
@@ -21,6 +24,7 @@ public class FileResponse extends Response<File> {
 	public void send(AbsSender sender, Long chatId) throws TelegramApiException {
 		SendPhoto photo = new SendPhoto();
 		photo.setPhoto(new InputFile(this.getContent()));
+		photo.setCaption(caption);
 		photo.setChatId(Long.toString(chatId));
 		sender.execute(photo);	
 	}
