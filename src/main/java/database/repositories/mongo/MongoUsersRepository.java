@@ -36,7 +36,7 @@ public class MongoUsersRepository implements UsersRepository {
 		Document user =  new Document().append("id", userId)
 								.append("items", new ArrayList<String>())
 								.append("notes", new Document())
-								.append("notes", new String());
+								.append("server", new String("eu"));
 		users.insertOne(user);
 		return userFromDocument(user);
 	}
