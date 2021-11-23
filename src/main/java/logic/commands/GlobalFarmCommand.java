@@ -12,6 +12,8 @@ import util.response.StringResponse;
 
 public class GlobalFarmCommand extends AbsCommand {
 	
+	protected final long userId;
+	
 	public GlobalFarmCommand(long userId) {
 		this.userId = userId;
 	}

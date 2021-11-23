@@ -49,6 +49,15 @@ public class SetServerPersonalCommand extends AbsPersonalCommand {
 			rowList.add(row);
 		}); 
 		
+		InlineKeyboardButton button = new InlineKeyboardButton();
+		button.setText("Отмена команды");
+		button.setCallbackData(String.format("cancel"));
+		
+		List<InlineKeyboardButton> row = new ArrayList<>();
+		row.add(button);
+		
+		rowList.add(row);
+		
 		markup.setKeyboard(rowList);
 		
 		return markup;

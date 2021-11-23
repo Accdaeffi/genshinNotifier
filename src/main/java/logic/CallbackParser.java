@@ -35,8 +35,6 @@ public class CallbackParser {
 		
 		try {
 			
-			logger.info(messageText);
-			
 			String arr[] = messageText.split(" ", 2);
 			String command = arr[0];
 			String argument = (arr.length > 1) ? arr[1] : null;
@@ -47,6 +45,11 @@ public class CallbackParser {
 			switch (command) {
 				case "server_change": {
 					commandHandler = new ChangeServerPersonalCommand(messageAuthor.getId(), argument, messageId);
+				}
+				break;
+				
+				case "cancel": {
+					commandHandler = new CancelCommand(messageId);
 				}
 				break;
 				

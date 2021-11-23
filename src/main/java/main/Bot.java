@@ -83,6 +83,10 @@ public class Bot extends TelegramLongPollingBot {
 			int messageId = callback.getMessage().getMessageId();
 			User author = callback.getFrom();
 			
+			String authorId = (author.getUserName() == null) ? author.getFirstName() 
+															 : author.getUserName();
+			logger.info("Callback \"{}\" from {}", messageText, authorId);
+			
 			/* Parsing callback */
 			Optional<AbsCommand> optionalCallbackHandler = callbackParser.parseCallback(messageText, messageId, author);
 		
