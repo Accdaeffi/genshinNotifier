@@ -1,4 +1,4 @@
-package logic;
+package ru.dnoskov.logic;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,9 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import logic.commands.personal.items.*;
-import logic.commands.personal.notes.*;
-import logic.commands.*;
+import ru.dnoskov.logic.commands.personal.items.*;
+import ru.dnoskov.logic.commands.personal.notes.*;
+import ru.dnoskov.logic.commands.*;
 
 public class MessageParserTest {
 

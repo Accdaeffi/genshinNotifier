@@ -1,4 +1,4 @@
-package logic.commands;
+package ru.dnoskov.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,9 +7,9 @@ import java.util.Calendar;
 
 import org.junit.jupiter.api.Test;
 
-import util.response.FileResponse;
-import util.response.Response;
-import util.response.StringResponse;
+import ru.dnoskov.util.response.FileResponse;
+import ru.dnoskov.util.response.Response;
+import ru.dnoskov.util.response.StringResponse;
 
 public class GlobalFarmCommandTest {
 
