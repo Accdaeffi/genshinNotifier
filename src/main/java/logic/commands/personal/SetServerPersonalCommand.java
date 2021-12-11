@@ -24,7 +24,7 @@ public class SetServerPersonalCommand extends AbsPersonalCommand {
 		UsersService usersService = new UsersService();
 		User user = usersService.getOrCreateUserByTelegramId(userId);
 		
-		String text = String.format("Твой текущий сервер: %s", user.getServer().toRussian());
+		String text = String.format("Твой текущий сервер: %s", user.getServer().getRussianName());
 	
 		InlineKeyboardMarkup keyboard = createKeyboard(user.getServer());
 				
@@ -40,7 +40,7 @@ public class SetServerPersonalCommand extends AbsPersonalCommand {
 						.filter(server -> !server.equals(currentServer))
 						.forEach(server -> {
 			InlineKeyboardButton button = new InlineKeyboardButton();
-			button.setText(server.toRussian());
+			button.setText(server.getRussianName());
 			button.setCallbackData(String.format("server_change %s", server.toString()));
 			
 			List<InlineKeyboardButton> row = new ArrayList<>();

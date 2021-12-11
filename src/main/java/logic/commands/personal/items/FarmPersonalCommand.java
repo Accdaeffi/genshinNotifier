@@ -28,7 +28,7 @@ public class FarmPersonalCommand extends AbsPersonalCommand {
 		UsersService usersService = new UsersService();
 		User user = usersService.getOrCreateUserByTelegramId(userId);
 		
-		int dayOfWeek = Util.GetDayOfWeek(user.getServer().getTimezone());
+		int dayOfWeek = Util.GetDayOfWeek(user.getServer().getServerTimeZone());
 		
 		if (user.getItems().isEmpty()) {
 			answer.append("Я не знаю, по каким предметам тебе нужна информация.");

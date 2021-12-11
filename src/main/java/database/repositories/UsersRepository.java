@@ -17,6 +17,7 @@ public interface UsersRepository {
 	 * Create user by its Telegram id. If such user already exists - do nothing. 
 	 * 
 	 * @param userId - telegram id of user
+	 * @return created and saved in databased user
 	 */
 	public User createUserById(long userId);
 	
@@ -35,7 +36,7 @@ public interface UsersRepository {
 	 * 
 	 * @param user
 	 * @param itemNameOrTag
-	 * @return true, if delete 
+	 * @return true, if deleted 
 	 * 		   false, if there are no such item
 	 */
 	public boolean delItem(User user, Item item);
@@ -59,5 +60,13 @@ public interface UsersRepository {
 	 */
 	public String deleteNote(User user, String key);
 	
+	/**
+	 * Set game server for the user
+	 * 
+	 * @param user
+	 * @param server
+	 * @return true if successfully set, 
+	 * 		   false otherwise	
+	 */
 	public boolean setServer(User user, String server);
 }

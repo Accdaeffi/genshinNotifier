@@ -3,6 +3,8 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import database.dao.Server;
+
 public class Util {
 	
 	/** Convert Thursday to Monday, Friday to Tuesday and Saturday to Wednesday
@@ -65,21 +67,10 @@ public class Util {
 	
 	// TODO: rewrite on English
 	/**
-	 * Возвращает, дроп с какого дня недели сейчас падает с подземелий.
-	 * 
-	 * @return day of week from Calendar.DAY_OF_WEEK
-	 */
-	public static int GetDayOfWeek() {
-		// Server time GMT+1, Domain restart time - 4:00 at server time
-		// So in GMT-3 timezone domain get changed at 0:00
-		final String TIME_OFFSET = "-3"; 
-		
-		Calendar today = Calendar.getInstance(
-				TimeZone.getTimeZone(ZoneId.of(TIME_OFFSET))); 
-		
-		return today.get(Calendar.DAY_OF_WEEK);
-	}
-	
+	* Возвращает, дроп с какого дня недели сейчас падает с подземелий.
+ 	* 
+ 	* @return day of week from Calendar.DAY_OF_WEEK
+ 	*/
 	public static int GetDayOfWeek(TimeZone timezone) {
 		Calendar today = Calendar.getInstance(timezone); 
 		

@@ -25,11 +25,11 @@ public class GlobalFarmCommand extends AbsCommand {
 		UsersService usersService = new UsersService();
 		User user = usersService.getOrCreateUserByTelegramId(userId);
 		
-		int dayOfWeek = Util.GetDayOfWeek(user.getServer().getTimezone());
+		int dayOfWeek = Util.GetDayOfWeek(user.getServer().getServerTimeZone());
 		
 		if (dayOfWeek != Calendar.SUNDAY) {
 			String nameOfFile = Util.GetPictureFileNameByDay(dayOfWeek);
-			String caption = String.format("Сервер: %s", user.getServer().toRussian());
+			String caption = String.format("Сервер: %s", user.getServer().getRussianName());
 					
 			result = new FileResponse(new File(getClass()
 												 .getClassLoader()

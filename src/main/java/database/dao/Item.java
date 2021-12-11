@@ -1,24 +1,18 @@
 package database.dao;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+@Data
 public class Item {
 
-	@Getter
-	@Setter
 	private String name;
 
-	@Getter
-	@Setter
 	private String tag;
 
-	@Getter
-	@Setter
 	private int day;
 
-	@Getter
-	@Setter
 	private ItemType type;
 	
 	public Item (String name, String tag, int day, String type) {
