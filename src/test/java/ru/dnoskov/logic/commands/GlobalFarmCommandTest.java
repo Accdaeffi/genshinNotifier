@@ -7,7 +7,7 @@ import java.util.Calendar;
 
 import org.junit.jupiter.api.Test;
 
-import ru.dnoskov.util.response.FileResponse;
+import ru.dnoskov.util.response.PhotoResponse;
 import ru.dnoskov.util.response.Response;
 import ru.dnoskov.util.response.StringResponse;
 
@@ -41,7 +41,7 @@ public class GlobalFarmCommandTest {
 				assertTrue(response.getClass().equals(StringResponse.class));
 				assertEquals("Фарми что угодно - сегодня воскресенье!", (String) response.getContent());
 			} else {
-				assertTrue(response.getClass().equals(FileResponse.class));
+				assertTrue(response.getClass().equals(PhotoResponse.class));
 				
 				switch (dayOfWeek) {
 					case Calendar.MONDAY:

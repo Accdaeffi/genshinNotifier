@@ -6,7 +6,7 @@ import java.util.Calendar;
 import ru.dnoskov.database.dao.User;
 import ru.dnoskov.database.services.UsersService;
 import ru.dnoskov.util.Util;
-import ru.dnoskov.util.response.FileResponse;
+import ru.dnoskov.util.response.PhotoResponse;
 import ru.dnoskov.util.response.Response;
 import ru.dnoskov.util.response.StringResponse;
 
@@ -31,11 +31,7 @@ public class GlobalFarmCommand extends AbsCommand {
 			String nameOfFile = Util.GetPictureFileNameByDay(dayOfWeek);
 			String caption = String.format("Сервер: %s", user.getServer().getRussianName());
 					
-			result = new FileResponse(new File(getClass()
-												 .getClassLoader()
-												 .getResource(nameOfFile)
-												 .getFile()),
-									  caption);
+			result = new PhotoResponse(nameOfFile, caption);
 			
 			
 		} else {
