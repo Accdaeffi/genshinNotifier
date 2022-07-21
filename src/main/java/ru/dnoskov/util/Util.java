@@ -1,9 +1,9 @@
 package ru.dnoskov.util;
-import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TimeZone;
-
-import ru.dnoskov.database.dao.Server;
 
 public class Util {
 	
@@ -40,29 +40,29 @@ public class Util {
 	 * @param dayOfWeek from Calendar.DAY_OF_WEEK
 	 * @return name of file with extension
 	 */
-	public static String GetPictureFileNameByDay(int dayOfWeek) {
-		String nameOfFile;
+	public static List<String> GetFileNamesByDay(int dayOfWeek) {
+		List<String> names = new ArrayList<String>();
 		
 		switch (dayOfWeek) {
 			case Calendar.MONDAY:
 			case Calendar.THURSDAY:
-				nameOfFile = "1.jpg";
+				names.add("1.jpg");
 				break;
 			case Calendar.TUESDAY:
 			case Calendar.FRIDAY:
-				nameOfFile = "2.jpg";
+				names.add("2.jpg");
 				break;
 			case Calendar.WEDNESDAY:
-				nameOfFile = "3.jpg";
+				names.add("3.jpg");
 				break;
 			case Calendar.SATURDAY:
-				nameOfFile = "6.jpg";
+				names.add("6.jpg");
 				break;
 			default:
-				nameOfFile = "error"; // TODO: replace with custom exception
+				names.add("error"); // TODO: replace with custom exception
 		}
 		
-		return nameOfFile;
+		return names;
 	}
 	
 	// TODO: rewrite on English

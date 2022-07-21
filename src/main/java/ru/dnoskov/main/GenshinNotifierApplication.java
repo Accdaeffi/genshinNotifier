@@ -30,6 +30,13 @@ public class GenshinNotifierApplication {
             
             logger.info("Bot started!");
             
+            if (getenv.get("DEBUG_MODE").equals("true")) {
+            	
+            	logger.info("Debug started!");
+            	DebugOperations.doDebug(bot);
+            	logger.info("Debug ended!");
+            }
+            
         } catch (TelegramApiException e) {
         	logger.error("Critical error!", e);
         }
