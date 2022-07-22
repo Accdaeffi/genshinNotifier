@@ -29,13 +29,13 @@ public class GlobalFarmCommand extends AbsCommand {
 		int dayOfWeek = Util.GetDayOfWeek(user.getServer().getServerTimeZone());
 		
 		if (dayOfWeek != Calendar.SUNDAY) {
-			List<String> filesNames = Util.GetFileNamesByDay(dayOfWeek);
+			List<String> fileNames = Util.GetFileNamesByDay(dayOfWeek);
 			String caption = String.format("Сервер: %s", user.getServer().getRussianName());
 					
-			if (filesNames.size() == 1) {
-				result = new PhotoResponse(filesNames.get(0), caption); 
+			if (fileNames.size() == 1) {
+				result = new PhotoResponse(fileNames.get(0), caption); 
 			} else {
-				result = new MediaGroupResponse(filesNames, caption);
+				result = new MediaGroupResponse(fileNames, caption);
 			}
 			
 			
