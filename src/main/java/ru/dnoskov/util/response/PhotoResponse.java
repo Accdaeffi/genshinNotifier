@@ -31,7 +31,7 @@ public class PhotoResponse extends Response<String> {
 			photo.setPhoto(new InputFile(fileId));
 		} else {
 			FileReader fr = new FileReader();
-			photo.setPhoto(new InputFile(fr.readFileFromDirectory(this.getContent())));
+			photo.setPhoto(new InputFile(fr.readFileFromDirectory("", this.getContent())));
 		}
 		
 		photo.setCaption(caption);

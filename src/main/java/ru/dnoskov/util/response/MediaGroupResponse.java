@@ -40,7 +40,7 @@ public class MediaGroupResponse extends Response<List<String>> {
 				photo.setMedia(FileMapper.FileNameFileIdMap.get(fileName));
 			} else {
 				FileReader reader = new FileReader();
-				File filePhoto = reader.readFileFromDirectory(fileName);
+				File filePhoto = reader.readFileFromDirectory("", fileName);
 
 				photo.setMedia(filePhoto, fileName);
 			}

@@ -9,15 +9,20 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 
 import ru.dnoskov.database.dao.Item;
+import ru.dnoskov.database.dao.Material;
 import ru.dnoskov.database.repositories.ItemsRepository;
+import ru.dnoskov.database.sources.DataSource;
+import ru.dnoskov.util.NoSuchItemException;
 import ru.dnoskov.util.Util;
 
 public class MongoItemsRepository implements ItemsRepository {
 	
 	private MongoCollection<Document> items;
+	private List<Material> materials;
 	
-	public MongoItemsRepository(MongoCollection<Document> itemsCollection) {
+	public MongoItemsRepository(DataSource dataSource, MongoCollection<Document> itemsCollection) {
 		this.items = itemsCollection;
+		this.materials = dataSource.getMaterialsRepository().getAllMaterials();
 	}
 
 	@Override
@@ -62,7 +67,14 @@ public class MongoItemsRepository implements ItemsRepository {
 			int day = itemFromDatabase.getInteger("day");
 			String type = itemFromDatabase.getString("type");
 			
-			item = new Item(name, tag, day, type);
+			String materialTag = itemFromDatabase.getString("materialTag");
+			Material material = materials
+					.stream()
+					.filter(m -> m.getTag().equals(materialTag))
+					.findFirst()
+					.orElseThrow(() -> new NoSuchItemException());
+			
+			item = new Item(name, tag, day, material, type);
 		}
 		
 		return item;

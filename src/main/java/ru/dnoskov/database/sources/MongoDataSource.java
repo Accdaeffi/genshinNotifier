@@ -6,11 +6,13 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
+import lombok.NonNull;
 import ru.dnoskov.database.repositories.ItemsRepository;
+import ru.dnoskov.database.repositories.MaterialsRepository;
 import ru.dnoskov.database.repositories.UsersRepository;
 import ru.dnoskov.database.repositories.mongo.MongoItemsRepository;
+import ru.dnoskov.database.repositories.mongo.MongoMaterialsRepository;
 import ru.dnoskov.database.repositories.mongo.MongoUsersRepository;
-import lombok.NonNull;
 
 public class MongoDataSource implements DataSource {
 	private static MongoDataSource instance;
@@ -39,11 +41,16 @@ public class MongoDataSource implements DataSource {
 
 	@Override
 	public ItemsRepository getItemsRepository() {
-		return new MongoItemsRepository(database.getCollection("items"));
+		return new MongoItemsRepository(this, database.getCollection("items"));
 	}
 
 	@Override
 	public UsersRepository getUsersRepository() {
-		return new MongoUsersRepository(database.getCollection("users"));
+		return new MongoUsersRepository(this, database.getCollection("users"));
+	}
+	
+	@Override
+	public MaterialsRepository getMaterialsRepository() {
+		return new MongoMaterialsRepository(this, database.getCollection("materials"));
 	}
 }

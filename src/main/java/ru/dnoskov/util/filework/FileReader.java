@@ -16,8 +16,6 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 public class FileReader {
-	
-	private ClassLoader classLoader = getClass().getClassLoader();
 
 	public List<File> readAllFilesFromDirectory(String path) {
 		List<File> files = new ArrayList<File>();
@@ -48,10 +46,19 @@ public class FileReader {
 		return files;
 	}
 	
-	public File readFileFromDirectory(String fileName) {
-		return new File(classLoader
-				 .getResource(fileName)
-				 .getFile());
+	public File readFileFromDirectory(String directory, String fileName) {
 		
+		URI fullFilePath;
+		try {	
+			fullFilePath = ClassLoader.getSystemResource(directory+fileName).toURI();
+			
+			log.info("Photo " + directory + fileName + " readed!");
+			
+			return Paths.get(fullFilePath).toFile();	
+		} catch (URISyntaxException e) {
+			log.error(e);
+			return null;
+		}
+	
 	}
 }
