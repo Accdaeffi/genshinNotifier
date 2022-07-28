@@ -20,7 +20,8 @@ public class CollageRowsAdder {
 	private static final int ROW_HEIGHT = 70;
 	
 	private static final int ITEM_START_X = 220;
-	private static final int ITEM_WIDTH = 55;
+	private static final int ITEM_HEIGHT = 65;
+	private static final int ITEM_PADDING = (ROW_HEIGHT-ITEM_HEIGHT)/2;
 	private static final int BETWEEN_ITEM_WIDTH = 15;
 	
 	static void addItemsAndMaterials(Graphics2D graphics, 
@@ -63,7 +64,7 @@ public class CollageRowsAdder {
 				//System.out.println("Current Y: " + currentY);
 				
 				BufferedImage itemImage = ImageIO.read(itemFile);
-				graphics.drawImage(itemImage, currentX, currentY+2, null);
+				graphics.drawImage(itemImage, currentX, currentY+ITEM_PADDING, null);
 				
 				currentInTheRow++;
 				totalDrawn++;
@@ -78,7 +79,7 @@ public class CollageRowsAdder {
 					currentX = ITEM_START_X;
 					currentY = currentY + ROW_HEIGHT;
 				} else {
-					currentX = currentX + ITEM_WIDTH + BETWEEN_ITEM_WIDTH;
+					currentX = currentX + itemImage.getWidth() + BETWEEN_ITEM_WIDTH;
 				}
 			}
 			
