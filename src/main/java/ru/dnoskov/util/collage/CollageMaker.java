@@ -3,8 +3,11 @@ package ru.dnoskov.util.collage;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -12,8 +15,8 @@ import javax.imageio.ImageIO;
 
 import ru.dnoskov.database.dao.Item;
 import ru.dnoskov.database.dao.Material;
-import ru.dnoskov.util.collage.rows.CollageRows;
 import ru.dnoskov.util.Util;
+import ru.dnoskov.util.collage.rows.CollageRows;
 import ru.dnoskov.util.filework.FileReader;
 
 public class CollageMaker {
@@ -24,7 +27,7 @@ public class CollageMaker {
 	
 	private static final int PICTURE_WIDTH = 1056;
 
-	public void makeCollage(int weekDay, List<Item> items) throws IOException {
+	public InputStream makeCollage(int weekDay, List<Item> items) throws IOException {
 		String headerFileName = Util.GetHeaderFileNameByDay(weekDay);
 		String tomorrowFileName = Util.GetTomorrowFileNameByDay(weekDay);
 		
@@ -64,8 +67,11 @@ public class CollageMaker {
 		currentY = header.getHeight() + mainPartHeight;
 		
 		graphics.drawImage(tomorrow, currentX, currentY, null);
+	
+		ByteArrayOutputStream os = new ByteArrayOutputStream();		
+		ImageIO.write(buffer,"jpeg", os);
 		
-		ImageIO.write(buffer,"png",new File("result.png"));
+		return new ByteArrayInputStream(os.toByteArray());
 
 	}
 

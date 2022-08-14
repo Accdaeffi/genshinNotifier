@@ -1,19 +1,31 @@
 package ru.dnoskov.logic.commands.personal.items;
 
-import java.util.LinkedList;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import lombok.extern.log4j.Log4j;
+import ru.dnoskov.database.dao.Item;
 import ru.dnoskov.database.dao.User;
 import ru.dnoskov.database.services.ItemsService;
 import ru.dnoskov.database.services.UsersService;
 import ru.dnoskov.logic.commands.personal.AbsPersonalCommand;
+import ru.dnoskov.main.DebugOperations;
 import ru.dnoskov.util.Util;
+import ru.dnoskov.util.collage.CollageMaker;
+import ru.dnoskov.util.response.PhotoResponse;
+import ru.dnoskov.util.response.Response;
 import ru.dnoskov.util.response.StringResponse;
 
+@Log4j
 public class FarmPersonalCommand extends AbsPersonalCommand {
 	
-	public FarmPersonalCommand(long userId) {
+	CollageMaker collageMaker;
+	
+	public FarmPersonalCommand(long userId, CollageMaker collageMaker) {
 		super(userId);
+		this.collageMaker = collageMaker;
 	}
 
 	/**
@@ -22,7 +34,9 @@ public class FarmPersonalCommand extends AbsPersonalCommand {
 	 * @return Russian String with response message text 
 	 */
 	@Override
-	public StringResponse execute() {
+	public Response execute() {
+		Response result;
+
 		StringBuilder answer = new StringBuilder();
 		
 		UsersService usersService = new UsersService();
@@ -31,42 +45,60 @@ public class FarmPersonalCommand extends AbsPersonalCommand {
 		int dayOfWeek = Util.GetDayOfWeek(user.getServer().getServerTimeZone());
 		
 		if (user.getItems().isEmpty()) {
-			answer.append("Я не знаю, по каким предметам тебе нужна информация.");
+			result = new StringResponse("Я не знаю, по каким предметам тебе нужна информация.");
 		} else {
 			ItemsService itemsService = new ItemsService();
 			
-			List<String> todayFarmUserItems = new LinkedList<>();
-			
-			itemsService.getFarmableItemsByDay(user.getItems(), dayOfWeek)
-					.forEach(item -> todayFarmUserItems.add(item.getName()));
+			List<Item> todayFarmUserItems = 
+					itemsService.getFarmableItemsByDay(user.getItems(), dayOfWeek);
 			
 			if (todayFarmUserItems.isEmpty()) {
 				answer.append("Сегодня тебе ничего не нужно фармить!");
 				answer.append(System.lineSeparator());
 				
-				List<String> tomorrowFarmUserItems = new LinkedList<>();
-				
 				/* get next day of week */
 				int nextDayOfWeek = dayOfWeek%7+1;
 				
-				itemsService.getFarmableItemsByDay(user.getItems(), nextDayOfWeek)
-					.forEach(item -> tomorrowFarmUserItems.add(item.getName()));
+				List<Item> tomorrowFarmUserItems = 
+						itemsService.getFarmableItemsByDay(user.getItems(), nextDayOfWeek);
+	
 				
 				if (tomorrowFarmUserItems.isEmpty()) {
 					answer.append("И завтра, кстати, тоже.");
 				} else {
 					answer.append("Зато завтра можно будет фармить ресурсы для: ");
-					answer.append(String.join(", ", tomorrowFarmUserItems));
+					answer.append(String.join(", ", 
+							tomorrowFarmUserItems.stream()
+								.map(i -> i.getName())
+								.collect(Collectors.toList()))
+							);
 					answer.append(".");
 				}
 				
+				result = new StringResponse(answer.toString());
+				
 			} else {
-				answer.append("Сегодня можно фармить ресурсы для: ");
-				answer.append(String.join(", ", todayFarmUserItems));
-				answer.append(".");
+				try {
+					InputStream collageStream = collageMaker.makeCollage(dayOfWeek, todayFarmUserItems);
+					result = new PhotoResponse(collageStream, "generated_"+user.getId(), null);
+				} 
+				catch (Exception e) {
+					log.error(e);
+					
+					answer.append("Сегодня можно фармить ресурсы для: ");
+					answer.append(String.join(", ", 
+							todayFarmUserItems.stream()
+								.map(i -> i.getName())
+								.collect(Collectors.toList()))
+							);
+					answer.append(".");
+					
+					result = new StringResponse(answer.toString());
+				}
+				
 			}
 		}
-		return new StringResponse(answer.toString());
+		return result;
 	}
 
 }

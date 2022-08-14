@@ -14,17 +14,7 @@ public class DebugOperations {
 	static Long testChatId = 138066272L;
 	
 	static void doDebug(Bot bot) {
-		
-		List<String> files = new ArrayList<>();
-		files.add("1.jpg");
-		
-		PhotoResponse response = new PhotoResponse("AMB.png", "test caption");
-		
-		try {
-			response.send(bot, testChatId);
-		} catch (TelegramApiException e) {
-			log.error(e);
-		}
+
 		
 	}
 }
