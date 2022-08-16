@@ -80,7 +80,8 @@ public class FarmPersonalCommand extends AbsPersonalCommand {
 			} else {
 				try {
 					InputStream collageStream = collageMaker.makeCollage(dayOfWeek, todayFarmUserItems);
-					result = new PhotoResponse(collageStream, "generated_"+user.getId(), null);
+					
+					result = new PhotoResponse(collageStream, "generated_for_"+user.getId(), null);
 				} 
 				catch (Exception e) {
 					log.error(e);

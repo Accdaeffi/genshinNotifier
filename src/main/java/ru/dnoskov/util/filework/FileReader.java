@@ -41,7 +41,7 @@ public class FileReader {
 			log.error(e);
 		}
 	   
-		log.info("Photos readed!");
+		//log.info("Photos readed!");
 		
 		return files;
 	}
@@ -50,11 +50,11 @@ public class FileReader {
 		
 		URI fullFilePath;
 		try {	
-			log.info("Reading from " + directory + fileName);
+			//log.info("Reading from " + directory + fileName);
 			
 			fullFilePath = ClassLoader.getSystemResource(directory+fileName).toURI();
 			
-			log.info("Photo " + directory + fileName + " readed!");
+			//log.info("Photo " + directory + fileName + " readed!");
 			
 			return Paths.get(fullFilePath).toFile();	
 		} catch (URISyntaxException e) {

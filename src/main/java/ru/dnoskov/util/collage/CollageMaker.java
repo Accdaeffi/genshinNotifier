@@ -47,7 +47,7 @@ public class CollageMaker {
 		int mainPartHeight = rowMaker.calcMainPartHeight(itemsSortedByMaterials);
 		int pictureHeight = header.getHeight() + mainPartHeight + tomorrow.getHeight();
 		
-		BufferedImage buffer = new BufferedImage(PICTURE_WIDTH, pictureHeight, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage buffer = new BufferedImage(PICTURE_WIDTH, pictureHeight, BufferedImage.TYPE_INT_RGB);
 		Graphics2D graphics = buffer.createGraphics();
 		
 		int currentX = 0;
@@ -69,7 +69,7 @@ public class CollageMaker {
 		graphics.drawImage(tomorrow, currentX, currentY, null);
 	
 		ByteArrayOutputStream os = new ByteArrayOutputStream();		
-		ImageIO.write(buffer,"jpeg", os);
+		ImageIO.write(buffer, "jpg", os);
 		
 		return new ByteArrayInputStream(os.toByteArray());
 

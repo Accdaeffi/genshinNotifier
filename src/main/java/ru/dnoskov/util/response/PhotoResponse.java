@@ -17,14 +17,14 @@ public class PhotoResponse extends Response<String> {
 	public PhotoResponse(String fileName, String caption) {
 		super(caption);
 		
-		String fileId = FileMapper.FileNameFileIdMap.get(this.getContent());
+		String fileId = FileMapper.FileNameFileIdMap.get(fileName);
 		
 		if (fileId != null) {
 			
 			file = new InputFile(fileId);
 		} else {
 			FileReader fr = new FileReader();
-			file = new InputFile(fr.readFileFromDirectory("", this.getContent()));
+			file = new InputFile(fr.readFileFromDirectory("", fileName));
 		}
 		
 	}

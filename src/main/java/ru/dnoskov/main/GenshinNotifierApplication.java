@@ -25,8 +25,8 @@ public class GenshinNotifierApplication {
             
             botsApi.registerBot(bot);
             
-            InitialFileUploader uploader = new InitialFileUploader(bot);
-            uploader.uploadFilesToTelegramServer();
+            /*InitialFileUploader uploader = new InitialFileUploader(bot);
+            uploader.uploadFilesToTelegramServer();*/
             
             logger.info("Bot started!");
             
