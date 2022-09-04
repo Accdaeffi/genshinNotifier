@@ -84,7 +84,7 @@ public class FarmPersonalCommand extends AbsPersonalCommand {
 					result = new PhotoResponse(collageStream, "generated_for_"+user.getId(), null);
 				} 
 				catch (Exception e) {
-					log.error(e);
+					log.error("Error during making collage!", e);
 					
 					answer.append("Сегодня можно фармить ресурсы для: ");
 					answer.append(String.join(", ", 
