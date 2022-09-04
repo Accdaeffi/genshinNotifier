@@ -15,12 +15,13 @@ import com.mongodb.client.model.Updates;
 import ru.dnoskov.database.dao.Item;
 import ru.dnoskov.database.dao.User;
 import ru.dnoskov.database.repositories.UsersRepository;
+import ru.dnoskov.database.sources.DataSource;
 
 public class MongoUsersRepository implements UsersRepository {
 
 	private MongoCollection<Document> users;
 	
-	public MongoUsersRepository (MongoCollection<Document> usersCollection) {
+	public MongoUsersRepository(DataSource dataSource, MongoCollection<Document> usersCollection) {
 		this.users = usersCollection;
 	}
 

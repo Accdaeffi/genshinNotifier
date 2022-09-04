@@ -10,6 +10,7 @@ import ru.dnoskov.logic.commands.*;
 import ru.dnoskov.logic.commands.personal.SetServerPersonalCommand;
 import ru.dnoskov.logic.commands.personal.items.*;
 import ru.dnoskov.logic.commands.personal.notes.*;
+import ru.dnoskov.util.collage.CollageMaker;
 import lombok.NonNull;
 
 public class MessageParser {
@@ -60,7 +61,7 @@ public class MessageParser {
 				case "/pfarm":
 				case "/personal_farm":
 				{
-					commandHandler = new FarmPersonalCommand(messageAuthor.getId());
+					commandHandler = new FarmPersonalCommand(messageAuthor.getId(), new CollageMaker());
 				}
 				break;
 				

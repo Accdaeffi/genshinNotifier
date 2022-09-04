@@ -71,7 +71,67 @@ public class Util {
 
 		return names;
 	}
-
+	
+	/**
+	 * Get file name with header picture for the day of farm
+	 * 
+	 * @param dayOfWeek from Calendar.DAY_OF_WEEK
+	 * @return name of file with extension
+	 */
+	public static String GetHeaderFileNameByDay(int dayOfWeek) {
+		String name = new String();
+		
+		switch (dayOfWeek) {
+			case Calendar.MONDAY:
+			case Calendar.THURSDAY:
+				name = "1_header.png";
+				break;
+			case Calendar.TUESDAY:
+			case Calendar.FRIDAY:
+				name = "2_header.png";
+				break;
+			case Calendar.WEDNESDAY:
+			case Calendar.SATURDAY:
+				name = "3_header.png";
+				break;
+			default:
+				name = "error"; // TODO: replace with custom exception
+		}
+		
+		return name;
+	}
+	
+	/**
+	 * Get file name with picture with tomorrow farm for the day of farm
+	 * 
+	 * @param dayOfWeek from Calendar.DAY_OF_WEEK
+	 * @return name of file with extension
+	 */
+	public static String GetTomorrowFileNameByDay(int dayOfWeek) {
+		String name = new String();
+		
+		switch (dayOfWeek) {
+			case Calendar.MONDAY:
+			case Calendar.THURSDAY:
+				name = "1_tomorrow.png";
+				break;
+			case Calendar.TUESDAY:
+			case Calendar.FRIDAY:
+				name = "2_tomorrow.png";
+				break;
+			case Calendar.WEDNESDAY:
+				name = "3_tomorrow.png";
+				break;
+			case Calendar.SATURDAY:
+				name = "6_tomorrow.png";
+				break;
+			default:
+				name = "error"; // TODO: replace with custom exception
+		}
+		
+		return name;
+	}
+	
 	// TODO: rewrite on English
 	/**
 	 * Возвращает, дроп с какого дня недели сейчас падает с подземелий.
