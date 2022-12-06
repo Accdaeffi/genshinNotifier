@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class CollageRowsAdder {
 			Material material = entry.getKey();
 			List<Item> materialItems = entry.getValue();
 			
-			File materialFile = reader.readFileFromDirectory(Constants.Paths.PATH_TO_MATERIALS, material.getTag()+Constants.PHOTO_EXTENSION);
+			InputStream materialFile = reader.readFileFromDirectory(Constants.Paths.PATH_TO_MATERIALS, material.getTag()+Constants.PHOTO_EXTENSION);
 			
 			//System.out.println("Current X: " + currentX);
 			//System.out.println("Current Y: " + currentY);
@@ -58,7 +59,7 @@ public class CollageRowsAdder {
 			int currentInTheRow = 0;	
 			
 			for (Item item : materialItems) {
-				File itemFile = reader.readFileFromDirectory(Constants.Paths.PATH_TO_ITEMS, item.getTag()+Constants.PHOTO_EXTENSION);
+				InputStream itemFile = reader.readFileFromDirectory(Constants.Paths.PATH_TO_ITEMS, item.getTag()+Constants.PHOTO_EXTENSION);
 				
 				//System.out.println("Current X: " + currentX);
 				//System.out.println("Current Y: " + currentY);

@@ -24,7 +24,7 @@ public class PhotoResponse extends Response<String> {
 			file = new InputFile(fileId);
 		} else {
 			FileReader fr = new FileReader();
-			file = new InputFile(fr.readFileFromDirectory("", fileName));
+			file = new InputFile(fr.readFileFromDirectory("", fileName), fileName);
 		}
 		
 	}

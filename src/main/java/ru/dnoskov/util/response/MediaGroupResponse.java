@@ -1,6 +1,7 @@
 package ru.dnoskov.util.response;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class MediaGroupResponse extends Response<List<String>> {
 				photo.setMedia(FileMapper.FileNameFileIdMap.get(fileName));
 			} else {
 				FileReader reader = new FileReader();
-				File filePhoto = reader.readFileFromDirectory("", fileName);
+				InputStream filePhoto = reader.readFileFromDirectory("", fileName);
 
 				photo.setMedia(filePhoto, fileName);
 			}

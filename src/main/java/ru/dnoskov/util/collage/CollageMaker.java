@@ -34,9 +34,9 @@ public class CollageMaker {
 		Map<Material, List<Item>> itemsSortedByMaterials = ItemListToMaterialMapMapper.map(items);
 		
 		FileReader reader = new FileReader();
-		File headerFile = reader.readFileFromDirectory(Constants.Paths.PATH_TO_BACKGROUNDS, headerFileName);
-		File tomorrowFile = reader.readFileFromDirectory(Constants.Paths.PATH_TO_BACKGROUNDS, tomorrowFileName);
-		File separatorFile = reader.readFileFromDirectory(Constants.Paths.PATH_TO_BACKGROUNDS, SEPARATOR_FILE_NAME);
+		InputStream headerFile = reader.readFileFromDirectory(Constants.Paths.PATH_TO_BACKGROUNDS, headerFileName);
+		InputStream tomorrowFile = reader.readFileFromDirectory(Constants.Paths.PATH_TO_BACKGROUNDS, tomorrowFileName);
+		InputStream separatorFile = reader.readFileFromDirectory(Constants.Paths.PATH_TO_BACKGROUNDS, SEPARATOR_FILE_NAME);
 		
 		BufferedImage header = ImageIO.read(headerFile);
 		BufferedImage tomorrow = ImageIO.read(tomorrowFile);

@@ -2,6 +2,7 @@ package ru.dnoskov.util.filework;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -46,18 +47,21 @@ public class FileReader {
 		return files;
 	}
 	
-	public File readFileFromDirectory(String directory, String fileName) {
+	public InputStream readFileFromDirectory(String directory, String fileName) {
 		
-		URI fullFilePath;
 		try {	
 			log.info("Reading from " + directory + fileName);
 			
-			fullFilePath = ClassLoader.getSystemResource(directory+fileName).toURI();
+			ClassLoader classLoader = getClass().getClassLoader();
+			InputStream inputStream = classLoader.getResourceAsStream(directory+fileName);
+			//File file = new File(classLoader.getResourceAsStream(directory+fileName)).getFile());
 			
-			log.info("Photo " + directory + fileName + " readed!");
+			//fullFilePath = ClassLoader.getSystemResource(directory+fileName).toURI();
 			
-			return Paths.get(fullFilePath).toFile();	
-		} catch (URISyntaxException e) {
+			log.info("Photo readed!");
+			
+			return inputStream;	
+		} catch (Exception e) {
 			log.error(e);
 			return null;
 		}
