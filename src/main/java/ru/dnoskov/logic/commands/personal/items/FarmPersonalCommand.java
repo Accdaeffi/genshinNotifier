@@ -30,7 +30,7 @@ public class FarmPersonalCommand extends AbsPersonalCommand {
 	/**
 	 * Calculate result of a command to get the goals of today's personal farm
 	 * 
-	 * @return Russian String with response message text
+	 * @return Russian String with response message text or Photo with caption
 	 */
 	@Override
 	public Response execute() {

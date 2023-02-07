@@ -13,5 +13,7 @@ public interface ItemsRepository {
 	public List<Item> getItemsByDay(int dayOfWeek);
 	
 	public List<Item> getAllItems();
+	
+	public List<Item> getItemsByMaterialTags(List<String> materialTags);
 
 }

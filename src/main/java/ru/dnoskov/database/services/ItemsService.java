@@ -3,18 +3,24 @@ package ru.dnoskov.database.services;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import ru.dnoskov.database.dao.Item;
+import ru.dnoskov.database.dao.Material;
 import ru.dnoskov.database.repositories.ItemsRepository;
+import ru.dnoskov.database.repositories.MaterialsRepository;
 import ru.dnoskov.main.Properties;
 import ru.dnoskov.util.NoSuchItemException;
 
 public class ItemsService {
-	ItemsRepository repository;
+	
+	ItemsRepository itemsRepository;
+	MaterialsRepository materialsRepository;
 	
 	public ItemsService() {
-		repository = Properties.getDataSource().getItemsRepository();
+		itemsRepository = Properties.getDataSource().getItemsRepository();
+		materialsRepository = Properties.getDataSource().getMaterialsRepository();
 	}
 	
 	/**
@@ -30,9 +36,12 @@ public class ItemsService {
 		List<Item> farmableItems = new LinkedList<>();
 		
 		if (dayOfWeek != Calendar.SUNDAY) {
-			farmableItems = repository.getItemsByDay(dayOfWeek);
+			List<Material> farmableMaterials = materialsRepository.getMaterialsByDay(dayOfWeek);
+			List<String> farmableMaterialsTags = farmableMaterials.stream().map(Material::getTag).collect(Collectors.toList());
+			
+			farmableItems = itemsRepository.getItemsByMaterialTags(farmableMaterialsTags);
 		} else {
-			farmableItems = repository.getAllItems();
+			farmableItems = itemsRepository.getAllItems();
 		}
 		
 		List<Item> result = farmableItems
@@ -57,9 +66,9 @@ public class ItemsService {
 		
 		/* Если текст размером с тег и большими буквами - то это тег */
 		if ((itemNameOrTag.length() == 3)&&(itemNameOrTag.toUpperCase().equals(itemNameOrTag))) {
-			result = repository.getItemByTag(itemNameOrTag);
+			result = itemsRepository.getItemByTag(itemNameOrTag);
 		} else {
-			result = repository.getItemByName(itemNameOrTag);
+			result = itemsRepository.getItemByName(itemNameOrTag);
 		}
 		
 		if (result == null) {

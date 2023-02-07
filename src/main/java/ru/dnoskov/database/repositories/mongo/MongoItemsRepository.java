@@ -58,6 +58,16 @@ public class MongoItemsRepository implements ItemsRepository {
 		return allItems;
 	}
 	
+	@Override
+	public List<Item> getItemsByMaterialTags(List<String> materialTags) {
+		LinkedList<Item> allItems = new LinkedList<>(); 
+		
+		items.find(Filters.in("materialTag", materialTags))
+				.forEach(itemFromDatabase -> allItems.add(itemFromDocument(itemFromDatabase)));
+		
+		return allItems;
+	}
+	
 	private Item itemFromDocument(Document itemFromDatabase) {
 		Item item = null;
 		
